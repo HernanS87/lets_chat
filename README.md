@@ -1,4 +1,4 @@
-<h1 align='center'>Chat App</h1>
+<h1 align='center'>Let's Chat</h1>
 <p align='center'>Aplicacion de mensajeria instantanea realizada en conjunto con Hernan Santarelli</p>
 
 ![captura del proyecto](/public/captura.png)
