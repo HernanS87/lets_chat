@@ -1,5 +1,5 @@
 {
-  "name": "firestore-chat-react",
+  "name": "lets-chat",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "emoji-picker-react": "^4.4.4",
-    "firebase": "^9.12.1",
+    "firebase": "^9.17.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-firebase-hooks": "^5.0.3",
