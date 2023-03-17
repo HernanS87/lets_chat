@@ -23,7 +23,7 @@ const Header = () => {
 
 	return (
 		<>
-			<header className="dark:bg-slate-700 h-20 p-4 dark:text-white shadow-xl text-black">
+			<header className="dark:bg-slate-700 absolute w-full h-20 p-4 dark:text-white shadow-xl text-black">
 				<nav>
 					<ul className="flex justify-between items-center gap-3 flex-1 w-full">
 						<li>

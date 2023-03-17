@@ -21,6 +21,8 @@ const Message = ({
 	const msgRef = useRef();
 	const { user } = useAuthContext();
 	const { activeChannel, changeMsgToEdit } = useChatContext();
+	const options = { hour: "numeric", minute: "numeric",}
+	const date = new Date(timestamp)
 
 	useEffect(() => {
 		msgRef.current.scrollIntoView({ block: 'end', behavior: 'smooth' });
@@ -86,7 +88,7 @@ const Message = ({
 				</p>
 			)}
 			<p className="italic text-xs text-slate-400 self-end font-medium">
-				{timestamp}
+				{new Intl.DateTimeFormat("en-US", options).format(date).toLowerCase()}
 			</p>
 		</div>
 	);

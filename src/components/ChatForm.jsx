@@ -45,7 +45,6 @@ const ChatForm = () => {
 				});
 				changeMsgToEdit('');
 			} else {
-				const date = Date.now();
 				const msgRef = collection(db, `canales/${activeChannel}/mensajes`);
 				const imgURL = fileURL;
 				setFileURL('');
@@ -55,15 +54,7 @@ const ChatForm = () => {
 					avatar: user.photoURL,
 					message: msgValue,
 					file: imgURL,
-					timestamp: new Intl.DateTimeFormat('en-US', {
-						day: '2-digit',
-						month: '2-digit',
-						year: 'numeric',
-						hour: '2-digit',
-						hour12: false,
-						minute: '2-digit',
-						second: '2-digit',
-					}).format(date),
+					timestamp: Date.now(),
 				});
 			}
 		}
