@@ -107,7 +107,7 @@ const ChatForm = () => {
 				<input
 					type="text"
 					placeholder={`Escribe un mensaje en ${activeChannel} 😀`}
-					className="dark:bg-slate-700 p-1 py-2 pl-10 dark:text-white dark:placeholder:text-slate-400 bg-slate-300 flex-1 w-full rounded-md placeholder:text-xs md:placeholder:text-sm xl:placeholder:text-lg placeholder:text-slate-800 placeholder:font-medium"
+					className="dark:bg-slate-700 p-1 py-2 pl-10 outline-none dark:text-white dark:placeholder:text-slate-400 bg-slate-300 flex-1 w-full rounded-md placeholder:text-xs md:placeholder:text-sm xl:placeholder:text-lg placeholder:text-slate-800 placeholder:font-medium"
 					value={inputMessage}
 					onChange={(evt) => setInputMessage(evt.target.value)}
 				/>

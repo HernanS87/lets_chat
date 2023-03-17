@@ -26,13 +26,69 @@ const Chat = () => {
         }));
         setAllMessages(msgs);
         const dates = [
-          ...new Set(
-            msgs.map((el) => new Date(el.timestamp).toLocaleDateString())
-          ),
+          ...new Set(msgs.map((el) => new Date(el.timestamp).toDateString())),
         ];
         console.log("dias", dates);
         setDates(dates);
       });
+    }
+  };
+
+  const guessNameDay = (date) => {
+    const day = new Date(date).getDay();
+    let nameDay = "";
+
+    switch (day) {
+      case 0:
+        nameDay = "Domingo";
+        break;
+      case 1:
+        nameDay = "Lunes";
+        break;
+      case 2:
+        nameDay = "Martes";
+        break;
+      case 3:
+        nameDay = "Miércoles";
+        break;
+      case 4:
+        nameDay = "Jueves";
+        break;
+      case 5:
+        nameDay = "Viernes";
+        break;
+      case 6:
+        nameDay = "Sábado";
+        break;
+      default:
+        break;
+    }
+
+    return nameDay
+  };
+
+  const whatDayIsIt = (date) => {
+    const dateInfo = new Date(date).toLocaleDateString().split("/");
+    const dateDay = dateInfo[0];
+    const dateMonth = dateInfo[1];
+    const currentDate = new Date().toLocaleDateString().split("/");
+    const currentDay = currentDate[0];
+    const currentMonth = currentDate[1];
+
+    if (date === new Date().toDateString()) {
+      return "Hoy";
+    }
+
+    if (dateMonth === currentMonth) {
+      if (currentDay - dateDay == 1) {
+        return "Ayer";
+      } else if (currentDay - dateDay > 1 && currentDay - dateDay <= 5) {
+        return guessNameDay(date);
+      } else {
+        return new Date(date).toLocaleDateString();
+      }
+    } else {
+      return new Date(date).toLocaleDateString();
     }
   };
 
@@ -61,18 +117,18 @@ const Chat = () => {
     <>
       <div className="absolute top-20 w-full h-[calc(100vh-140px)] flex items-start justify-center scrollbar scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
         {allMessages.length === 0 ? (
-          <div className="flex items-center justify-center">
+          <div className="absolute top-1/3 ">
             <HashLoader size={100} color={"#36d7b7"} />
           </div>
         ) : (
-          <div className="w-full ">
+          <div className="w-3/4 ">
             {dates.map((date) => {
               const arrayTemp = allMessages.filter(
-                (el) => new Date(el.timestamp).toLocaleDateString() === date
+                (el) => new Date(el.timestamp).toDateString() === date
               );
               return (
                 <>
-                  <h3 className="text-center">{date}</h3>
+                  <h3 className="text-center">{whatDayIsIt(date)}</h3>
                   <ul className="px-4 pt-5">
                     {arrayTemp.map((message) => (
                       <Message key={message.id} {...message} />
