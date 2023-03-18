@@ -63,33 +63,79 @@ const Chat = () => {
       default:
         break;
     }
-
     return nameDay
   };
+
+  const guessDate = (day, month, year) => {
+    let nameMonth = '';
+    switch (month) {
+      case '1':
+        nameMonth = 'Enero'
+        break;
+      case '2':
+        nameMonth = 'Febrero'
+        break;
+      case '3':
+        nameMonth = 'Marzo'
+        break;
+      case '4':
+        nameMonth = 'Abril'
+        break;
+      case '5':
+        nameMonth = 'Mayo'
+        break;
+      case '6':
+        nameMonth = 'Junio'
+        break;
+      case '7':
+        nameMonth = 'Julio'
+        break;
+      case '8':
+        nameMonth = 'Agosto'
+        break;
+      case '9':
+        nameMonth = 'Septiembre'
+        break;
+      case '10':
+        nameMonth = 'Octubre'
+        break;
+      case '11':
+        nameMonth = 'Noviembre'
+        break;
+      case '12':
+        nameMonth = 'Diciembre'
+        break;
+      default:
+        break;
+    }
+    return `${day} de ${nameMonth} de ${year}`
+  }
 
   const whatDayIsIt = (date) => {
     const dateInfo = new Date(date).toLocaleDateString().split("/");
     const dateDay = dateInfo[0];
     const dateMonth = dateInfo[1];
+    const dateYear = dateInfo[2]
     const currentDate = new Date().toLocaleDateString().split("/");
     const currentDay = currentDate[0];
     const currentMonth = currentDate[1];
+    const currentYear = currentDate[2]
+    let itIs = ''
 
-    if (date === new Date().toDateString()) {
-      return "Hoy";
-    }
-
-    if (dateMonth === currentMonth) {
-      if (currentDay - dateDay == 1) {
-        return "Ayer";
+    if (dateMonth === currentMonth && dateYear === currentYear) {
+      if (currentDay - dateDay == 0) {
+        itIs = "Hoy";
+      } else if (currentDay - dateDay == 1) {
+        itIs = "Ayer";
       } else if (currentDay - dateDay > 1 && currentDay - dateDay <= 5) {
-        return guessNameDay(date);
+        itIs = guessNameDay(date);
       } else {
-        return new Date(date).toLocaleDateString();
+        itIs = guessDate(dateDay, dateMonth, dateYear);
       }
     } else {
-      return new Date(date).toLocaleDateString();
+      itIs = guessDate(dateDay, dateMonth, dateYear);
     }
+    return itIs
   };
 
   useEffect(() => {
@@ -122,19 +168,19 @@ const Chat = () => {
           </div>
         ) : (
           <div className="w-3/4 ">
-            {dates.map((date) => {
+            {dates.map((date, index) => {
               const arrayTemp = allMessages.filter(
                 (el) => new Date(el.timestamp).toDateString() === date
               );
               return (
-                <>
-                  <h3 className="text-center">{whatDayIsIt(date)}</h3>
-                  <ul className="px-4 pt-5">
+                <div className="flex flex-col items-center" key={index}>
+                  <h3 className="text-center text-gray-400 text-sm font-medium px-2 py-1 rounded bg-slate-900">{whatDayIsIt(date)}</h3>
+                  <ul className="px-4 pt-5 w-full">
                     {arrayTemp.map((message) => (
                       <Message key={message.id} {...message} />
                     ))}
                   </ul>
-                </>
+                </div>
               );
             })}
           </div>
