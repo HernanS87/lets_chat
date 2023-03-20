@@ -63,64 +63,64 @@ const Chat = () => {
       default:
         break;
     }
-    return nameDay
+    return nameDay;
   };
 
   const guessDate = (day, month, year) => {
-    let nameMonth = '';
+    let nameMonth = "";
     switch (month) {
-      case '1':
-        nameMonth = 'Enero'
+      case "1":
+        nameMonth = "Enero";
         break;
-      case '2':
-        nameMonth = 'Febrero'
+      case "2":
+        nameMonth = "Febrero";
         break;
-      case '3':
-        nameMonth = 'Marzo'
+      case "3":
+        nameMonth = "Marzo";
         break;
-      case '4':
-        nameMonth = 'Abril'
+      case "4":
+        nameMonth = "Abril";
         break;
-      case '5':
-        nameMonth = 'Mayo'
+      case "5":
+        nameMonth = "Mayo";
         break;
-      case '6':
-        nameMonth = 'Junio'
+      case "6":
+        nameMonth = "Junio";
         break;
-      case '7':
-        nameMonth = 'Julio'
+      case "7":
+        nameMonth = "Julio";
         break;
-      case '8':
-        nameMonth = 'Agosto'
+      case "8":
+        nameMonth = "Agosto";
         break;
-      case '9':
-        nameMonth = 'Septiembre'
+      case "9":
+        nameMonth = "Septiembre";
         break;
-      case '10':
-        nameMonth = 'Octubre'
+      case "10":
+        nameMonth = "Octubre";
         break;
-      case '11':
-        nameMonth = 'Noviembre'
+      case "11":
+        nameMonth = "Noviembre";
         break;
-      case '12':
-        nameMonth = 'Diciembre'
+      case "12":
+        nameMonth = "Diciembre";
         break;
       default:
         break;
     }
-    return `${day} de ${nameMonth} de ${year}`
-  }
+    return `${day} de ${nameMonth} de ${year}`;
+  };
 
   const whatDayIsIt = (date) => {
     const dateInfo = new Date(date).toLocaleDateString().split("/");
     const dateDay = dateInfo[0];
     const dateMonth = dateInfo[1];
-    const dateYear = dateInfo[2]
+    const dateYear = dateInfo[2];
     const currentDate = new Date().toLocaleDateString().split("/");
     const currentDay = currentDate[0];
     const currentMonth = currentDate[1];
-    const currentYear = currentDate[2]
-    let itIs = ''
+    const currentYear = currentDate[2];
+    let itIs = "";
 
     if (dateMonth === currentMonth && dateYear === currentYear) {
       if (currentDay - dateDay == 0) {
@@ -135,7 +135,7 @@ const Chat = () => {
     } else {
       itIs = guessDate(dateDay, dateMonth, dateYear);
     }
-    return itIs
+    return itIs;
   };
 
   useEffect(() => {
@@ -161,7 +161,7 @@ const Chat = () => {
   // overflow-scroll overflow-x-hidden scrollbar scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200
   return (
     <>
-      <div className="absolute top-20 w-full h-[calc(100vh-140px)] flex items-start justify-center scrollbar scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
+      <div className="absolute top-20 pb-2 h-[calc(100vh-145px)] flex items-start justify-center scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
         {allMessages.length === 0 ? (
           <div className="absolute top-1/3 ">
             <HashLoader size={100} color={"#36d7b7"} />
@@ -174,11 +174,34 @@ const Chat = () => {
               );
               return (
                 <div className="flex flex-col items-center" key={index}>
-                  <h3 className="text-center text-gray-400 text-sm font-medium px-2 py-1 rounded bg-slate-900">{whatDayIsIt(date)}</h3>
+                  <h3 className="text-center text-gray-400 text-sm font-medium px-2 py-1 rounded bg-slate-900">
+                    {whatDayIsIt(date)}
+                  </h3>
                   <ul className="px-4 pt-5 w-full">
-                    {arrayTemp.map((message) => (
-                      <Message key={message.id} {...message} />
-                    ))}
+                    {arrayTemp.map((message, i) => {
+                      let sameUser = false;
+                      if (i > 0) {
+                        const previousHour = new Date(
+                          arrayTemp[i - 1].timestamp
+                        ).getTime();
+                        const currentHour = new Date(
+                          message.timestamp
+                        ).getTime();
+                        if (
+                          arrayTemp[i - 1].uid === message.uid &&
+                          (currentHour - previousHour) / 1000 < 3600
+                        ) {
+                          sameUser = true;
+                        }
+                      }
+                      return (
+                        <Message
+                          key={message.id}
+                          {...message}
+                          sameUser={sameUser}
+                        />
+                      );
+                    })}
                   </ul>
                 </div>
               );
