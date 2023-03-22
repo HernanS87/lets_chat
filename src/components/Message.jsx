@@ -40,12 +40,11 @@ const Message = ({
   };
 
   const handleEdit = async () => {
-    // let msgEdited = message.slice(1,-1)
     changeMsgToEdit({
       username,
       avatar,
       timestamp,
-      message: JSON.parse(message),
+      message: JSON.parse(message).replace(/\\"/g, '"'),
       uid,
       id,
       edited,
@@ -104,18 +103,19 @@ const Message = ({
         </a>
       )}
       {message && (
-        <p className={`${!sameUser && "pt-3"} break-all `}>
+        <p className={`${!sameUser && "pt-3"} break-words `}>
           {message.split("\\n").length > 1
             ? message
+                .replace(/\\"/g, '"')
                 .slice(1, -1)
                 .split("\\n")
-                .map((el,ind) => (
+                .map((el, ind) => (
                   <span key={ind}>
                     <span>{el}</span>
                     <br />
                   </span>
                 ))
-            : message.slice(1, -1)}
+            : message.replace(/\\"/g, '"').slice(1, -1)}
           <span className="italic text-xs text-slate-400 font-medium">
             {edited ? " (editado)" : ""}
           </span>

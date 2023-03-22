@@ -36,7 +36,7 @@ const ChatForm = () => {
         );
         await updateDoc(msgRef, {
           ...msgToEdit,
-          message: JSON.stringify(msgValue.replace(/\"/g, "'")),
+          message: JSON.stringify(msgValue),
           edited: true,
         });
         toast.success("Mensaje editado correctamente!", {
@@ -52,7 +52,7 @@ const ChatForm = () => {
           username: user.displayName,
           uid: user.uid,
           avatar: user.photoURL,
-          message: JSON.stringify(msgValue.replace(/\"/g, "'")),
+          message: JSON.stringify(msgValue),
           file: imgURL,
           timestamp: Date.now(),
         });
