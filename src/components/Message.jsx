@@ -24,7 +24,7 @@ const Message = ({
   const { activeChannel, changeMsgToEdit } = useChatContext();
   const options = { hour: "numeric", minute: "numeric" };
   const date = new Date(timestamp);
-  const [showHour, setShowHour] = useState(false)
+  const [showHour, setShowHour] = useState(false);
 
   useEffect(() => {
     msgRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
@@ -40,11 +40,12 @@ const Message = ({
   };
 
   const handleEdit = async () => {
+    // let msgEdited = message.slice(1,-1)
     changeMsgToEdit({
       username,
       avatar,
       timestamp,
-      message,
+      message: JSON.parse(message),
       uid,
       id,
       edited,
@@ -53,8 +54,17 @@ const Message = ({
   };
 
   return (
-    <div className="shadow-md flex flex-col pl-4 pr-12 relative " ref={msgRef} onMouseOver={() => {setShowHour(true)}} onMouseLeave={() => {setShowHour(false)}}>
-      <div className={`flex items-center gap-2 ${sameUser ? 'pt-2' : 'pt-4'}`}>
+    <div
+      className="shadow-md flex flex-col pl-4 pr-12 relative "
+      ref={msgRef}
+      onMouseOver={() => {
+        setShowHour(true);
+      }}
+      onMouseLeave={() => {
+        setShowHour(false);
+      }}
+    >
+      <div className={`flex items-center gap-2 ${sameUser ? "pt-2" : "pt-4"}`}>
         {!sameUser && (
           <img
             src={avatar}
@@ -63,10 +73,14 @@ const Message = ({
           />
         )}
 
-        <div className={`flex items-center flex-1 ${sameUser ? 'justify-end' : 'justify-between'}`}>
+        <div
+          className={`flex items-center flex-1 ${
+            sameUser ? "justify-end" : "justify-between"
+          }`}
+        >
           {!sameUser && <h3 className="font-medium">{username}</h3>}
-          
-          {/* {user.uid === uid && (
+
+          {user.uid === uid && (
             <div className="flex gap-5">
               {!file && (
                 <AiFillEdit
@@ -81,7 +95,7 @@ const Message = ({
                 onClick={handleDelete}
               />
             </div>
-          )} */}
+          )}
         </div>
       </div>
       {file && (
@@ -90,14 +104,28 @@ const Message = ({
         </a>
       )}
       {message && (
-        <p className={`${!sameUser && 'pt-3'} break-all `}>
-          {message}
+        <p className={`${!sameUser && "pt-3"} break-all `}>
+          {message.split("\\n").length > 1
+            ? message
+                .slice(1, -1)
+                .split("\\n")
+                .map((el,ind) => (
+                  <span key={ind}>
+                    <span>{el}</span>
+                    <br />
+                  </span>
+                ))
+            : message.slice(1, -1)}
           <span className="italic text-xs text-slate-400 font-medium">
             {edited ? " (editado)" : ""}
           </span>
         </p>
       )}
-      <p className={`italic text-xs text-slate-400 self-end font-medium absolute bottom-0 right-1 ${sameUser && !showHour ? 'hidden' : ' block'}`}>
+      <p
+        className={`italic text-xs text-slate-400 self-end font-medium absolute bottom-0 right-1 ${
+          sameUser && !showHour ? "hidden" : " block"
+        }`}
+      >
         {new Intl.DateTimeFormat("en-US", options).format(date).toLowerCase()}
       </p>
     </div>

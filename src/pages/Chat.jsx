@@ -161,7 +161,7 @@ const Chat = () => {
   // overflow-scroll overflow-x-hidden scrollbar scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200
   return (
     <>
-      <div className="absolute top-20 pb-2 h-[calc(100vh-145px)] flex items-start justify-center scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
+      <div className="absolute w-full top-20 pb-2 h-[calc(100vh-145px)] flex items-start justify-center scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
         {allMessages.length === 0 ? (
           <div className="absolute top-1/3 ">
             <HashLoader size={100} color={"#36d7b7"} />
