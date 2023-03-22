@@ -157,7 +157,7 @@ const Chat = () => {
         </h2>
       </div>
     );
-    
+
   return (
     <>
       <div className="absolute w-full top-20 pb-2 h-[calc(100vh-145px)] flex items-start justify-center scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
@@ -168,6 +168,7 @@ const Chat = () => {
         ) : (
           <div className="w-3/4 ">
             {dates.map((date, index) => {
+              let refHour = 0;
               const arrayTemp = allMessages.filter(
                 (el) => new Date(el.timestamp).toDateString() === date
               );
@@ -179,6 +180,7 @@ const Chat = () => {
                   <ul className="px-4 pt-5 w-full">
                     {arrayTemp.map((message, i) => {
                       let sameUser = false;
+                      // sameUser es true cuando el mismo usuario escribió mjs continuos durante media hora. Si pasa mas de media hora del último mjs(con foto y nombre) y ningun otro usuario escribió, entonces vuelve a aparecer su foto y nombre
                       if (i > 0) {
                         const previousHour = new Date(
                           arrayTemp[i - 1].timestamp
@@ -186,11 +188,23 @@ const Chat = () => {
                         const currentHour = new Date(
                           message.timestamp
                         ).getTime();
+                        if (i - 1 === 0) {
+                          refHour = previousHour;
+                        }
                         if (
                           arrayTemp[i - 1].uid === message.uid &&
-                          (currentHour - previousHour) / 1000 < 3600
+                          (currentHour - previousHour) / 1000 < 1800
                         ) {
-                          sameUser = true;
+                          if (
+                            refHour > 0 &&
+                            (currentHour - refHour) / 1000 > 1800
+                          ) {
+                            refHour = currentHour;
+                          } else {
+                            sameUser = true;
+                          }
+                        } else {
+                          refHour = currentHour;
                         }
                       }
                       return (
