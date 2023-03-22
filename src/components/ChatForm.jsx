@@ -12,6 +12,7 @@ import ImagePopup from "./ImagePopup";
 
 const ChatForm = () => {
   const [showPicker, setShowPicker] = useState(false);
+  const [textAreaScroll, setTextAreaScroll] = useState(false);
   const { user } = useAuthContext();
   const {
     activeChannel,
@@ -108,23 +109,37 @@ const ChatForm = () => {
         <textarea
           type="text"
           placeholder={`Escribe un mensaje en ${activeChannel} 😀`}
+          rows={1}
           // style={{ height: 'auto', minHeight: 'px' }}
-          className={`h-8 max-h-32 resize-none dark:bg-slate-700 p-1 pl-10 outline-none dark:text-white dark:placeholder:text-slate-400 bg-slate-300 flex-1 w-full rounded-md placeholder:text-xs md:placeholder:text-sm xl:placeholder:text-lg placeholder:text-slate-800 placeholder:font-medium ${
+          className={`h-8 max-h-32 resize-none  dark:bg-slate-700 p-1 pl-10 outline-none dark:text-white  dark:placeholder:text-slate-400 bg-slate-300 flex-1 w-full rounded-md placeholder:text-xs md:placeholder:text-sm xl:placeholder:text-lg placeholder:text-slate-800 placeholder:font-medium ${
             !inputMessage && "py-2"
+          } ${
+            textAreaScroll
+              ? "scrollbar-thin scrollbar-thumb-cyan-500 hover:scrollbar-thumb-cyan-300"
+              : "overflow-y-hidden"
           }`}
           value={inputMessage}
           onChange={(e) => {
             setInputMessage(e.target.value);
-            // e.target.style.height = "auto";
-            // e.target.style.height = e.target.scrollHeight + "px";
+            if (e.target.scrollHeight > 40) {
+              e.target.style.height = "auto";
+              e.target.style.height = e.target.scrollHeight + "px";
+              if (e.target.scrollHeight > 128) {
+                setTextAreaScroll(true);
+              } else {
+                setTextAreaScroll(false);
+              }
+            } else if (e.target.scrollHeight > 40 || e.target.value === '') {
+              e.target.style.height = "32px";
+              setTextAreaScroll(false);
+            }
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               console.log("Presuinaste Enter");
-
+              e.target.style.height = "32px";
               handleMessage(e);
-              // setInputMessage(inputMessage + "\n");
             }
           }}
         />
