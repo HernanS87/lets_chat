@@ -19,7 +19,6 @@ const Chat = () => {
       const q = query(msgRef, orderBy("timestamp", "asc"));
 
       onSnapshot(q, (snap) => {
-        console.log("ejecutando snapshot");
         const msgs = snap.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
@@ -28,7 +27,6 @@ const Chat = () => {
         const dates = [
           ...new Set(msgs.map((el) => new Date(el.timestamp).toDateString())),
         ];
-        console.log("dias", dates);
         setDates(dates);
       });
     }

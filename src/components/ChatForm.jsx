@@ -27,7 +27,7 @@ const ChatForm = () => {
 
   const handleMessage = async (evt) => {
     evt.preventDefault();
-    const msgValue = inputMessage;
+    const msgValue = inputMessage.trim();
     setInputMessage("");
     if (msgValue || fileURL) {
       if (msgToEdit) {
@@ -49,14 +49,16 @@ const ChatForm = () => {
         const msgRef = collection(db, `canales/${activeChannel}/mensajes`);
         const imgURL = fileURL;
         setFileURL("");
-        await addDoc(msgRef, {
-          username: user.displayName,
-          uid: user.uid,
-          avatar: user.photoURL,
-          message: JSON.stringify(msgValue),
-          file: imgURL,
-          timestamp: Date.now(),
-        });
+        if (msgValue) {
+          await addDoc(msgRef, {
+            username: user.displayName,
+            uid: user.uid,
+            avatar: user.photoURL,
+            message: JSON.stringify(msgValue),
+            file: imgURL,
+            timestamp: Date.now(),
+          });
+        }
       }
     }
   };
@@ -129,7 +131,7 @@ const ChatForm = () => {
               } else {
                 setTextAreaScroll(false);
               }
-            } else if (e.target.scrollHeight > 40 || e.target.value === '') {
+            } else if (e.target.scrollHeight > 40 || e.target.value === "") {
               e.target.style.height = "32px";
               setTextAreaScroll(false);
             }
