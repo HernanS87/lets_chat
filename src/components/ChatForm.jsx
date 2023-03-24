@@ -1,5 +1,5 @@
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { db } from "../firebase/firebase";
 import { useChatContext } from "../context/ChatContext";
@@ -14,6 +14,7 @@ const ChatForm = () => {
   const [showPicker, setShowPicker] = useState(false);
   const [textAreaScroll, setTextAreaScroll] = useState(false);
   const { user } = useAuthContext();
+  const txtAreaRef = useRef();
   const {
     activeChannel,
     msgToEdit,
@@ -84,16 +85,32 @@ const ChatForm = () => {
     }
   };
 
+  const addEmoji = (code) => {
+    const emoji = String.fromCodePoint(`0x${code.unified}`);
+    setInputMessage((prevInputMessage) => prevInputMessage + ` ${emoji}`);
+  };
+
   useEffect(() => {
     if (msgToEdit) {
       setInputMessage(msgToEdit.message);
     }
   }, [msgToEdit]);
 
-  const addEmoji = (code) => {
-    const emoji = String.fromCodePoint(`0x${code.unified}`);
-    setInputMessage((prevInputMessage) => prevInputMessage + ` ${emoji}`);
-  };
+  // Este useEffect ajusta el tamaño del textArea
+  useEffect(() => {
+    if (txtAreaRef.current.scrollHeight > 40 && inputMessage) {
+      txtAreaRef.current.style.height = "auto";
+      txtAreaRef.current.style.height = txtAreaRef.current.scrollHeight + "px";
+      if (txtAreaRef.current.scrollHeight > 128) {
+        setTextAreaScroll(true);
+      } else {
+        setTextAreaScroll(false);
+      }
+    } else if (inputMessage == "") {
+      txtAreaRef.current.style.height = "32px";
+      setTextAreaScroll(false);
+    }
+  }, [inputMessage]);
 
   return (
     <>
@@ -110,10 +127,11 @@ const ChatForm = () => {
       >
         <textarea
           type="text"
+          ref={txtAreaRef}
           placeholder={`Escribe un mensaje en ${activeChannel} 😀`}
           rows={1}
           // style={{ height: 'auto', minHeight: 'px' }}
-          className={`h-8 max-h-32 resize-none  dark:bg-slate-700 p-1 pl-10 outline-none dark:text-white  dark:placeholder:text-slate-400 bg-slate-300 flex-1 w-full rounded-md placeholder:text-xs md:placeholder:text-sm xl:placeholder:text-lg placeholder:text-slate-800 placeholder:font-medium ${
+          className={`h-8 max-h-32 resize-none   dark:bg-slate-700 p-1 pl-10 outline-none dark:text-white  dark:placeholder:text-slate-400 bg-slate-300 flex-1 w-full rounded-md placeholder:text-xs md:placeholder:text-sm xl:placeholder:text-lg placeholder:text-slate-800 placeholder:font-medium ${
             !inputMessage && "py-2"
           } ${
             textAreaScroll
@@ -121,21 +139,7 @@ const ChatForm = () => {
               : "overflow-y-hidden"
           }`}
           value={inputMessage}
-          onChange={(e) => {
-            setInputMessage(e.target.value);
-            if (e.target.scrollHeight > 40) {
-              e.target.style.height = "auto";
-              e.target.style.height = e.target.scrollHeight + "px";
-              if (e.target.scrollHeight > 128) {
-                setTextAreaScroll(true);
-              } else {
-                setTextAreaScroll(false);
-              }
-            } else if (e.target.scrollHeight > 40 || e.target.value === "") {
-              e.target.style.height = "32px";
-              setTextAreaScroll(false);
-            }
-          }}
+          onChange={(e) => setInputMessage(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
