@@ -13,3 +13,8 @@
 ::-webkit-scrollbar-thumb {
   border-radius: 20px;
 }
+
+@layer components{
+  .top-neg-1{
+      top: -25px;
+  }}

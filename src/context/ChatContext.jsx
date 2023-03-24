@@ -35,6 +35,7 @@ export const ChatContextProvider = ({ children }) => {
 				activeChannel,
 				changeActiveChannel,
 				msgToEdit,
+				setMsgToEdit,
 				changeMsgToEdit,
 				uploadFile,
 				fileURL,
