@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { MdCancel } from "react-icons/md";
+import { AiFillPlusCircle } from "react-icons/ai";
 import "react-toastify/dist/ReactToastify.css";
 import EmojiPicker from "emoji-picker-react";
 import ImagePopup from "./ImagePopup";
@@ -166,7 +167,7 @@ const ChatForm = () => {
             ref={txtAreaRef}
             placeholder={`Escribe un mensaje en ${activeChannel} 😀`}
             rows={1}
-            className={`h-8 max-h-32 resize-none   dark:bg-slate-700 p-1 pl-9 outline-none dark:text-white  dark:placeholder:text-slate-400 bg-slate-300 flex-1 w-full rounded-md placeholder:text-xs md:placeholder:text-sm xl:placeholder:text-lg placeholder:text-slate-800 placeholder:font-medium ${
+            className={`h-8 max-h-32 resize-none   dark:bg-slate-700 p-1 pl-9 outline-none dark:text-white  dark:placeholder:text-slate-400 bg-slate-300 flex-1 w-full rounded-md placeholder:text-xs md:placeholder:text-sm placeholder:text-slate-800 placeholder:font-medium ${
               !inputMessage && "py-2 leading-4"
             } ${
               textAreaScroll
@@ -183,12 +184,11 @@ const ChatForm = () => {
               }
             }}
           />
-
           <label
             htmlFor="images"
-            className="bg-gray-500  rounded-full absolute left-1 cursor-pointer text-2xl font-bold px-1 h-6 leading-5 "
+            className="absolute left-1 cursor-pointer "
           >
-            +
+            <AiFillPlusCircle  className='text-2xl text-gray-900 dark:text-slate-300'/>
             <input
               type="file"
               className="hidden"

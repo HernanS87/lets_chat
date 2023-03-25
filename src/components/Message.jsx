@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
-import { AiFillEdit } from "react-icons/ai";
-import { AiFillDelete } from "react-icons/ai";
+import { BsThreeDots } from "react-icons/bs";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useChatContext } from "../context/ChatContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import OptionsPopup from "./OptionsPopup";
 
 const Message = ({
   username,
@@ -25,9 +25,18 @@ const Message = ({
   const options = { hour: "numeric", minute: "numeric" };
   const date = new Date(timestamp);
   const [showHour, setShowHour] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
 
   useEffect(() => {
     msgRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
+
+    const handleEscape = (e) => {
+      console.log("escape");
+      if (e.keyCode === 27) {
+        setShowOptions(false);
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
   }, []);
 
   const handleDelete = async () => {
@@ -39,7 +48,7 @@ const Message = ({
     });
   };
 
-  const handleEdit = async () => {
+  const handleEdit = () => {
     changeMsgToEdit({
       username,
       avatar,
@@ -54,7 +63,7 @@ const Message = ({
 
   return (
     <div
-      className="shadow-md flex flex-col pl-4 pr-12 relative "
+      className="shadow-md flex flex-col pl-4 pr-12 relative hover:bg-slate-850  transition-all ease-in-out"
       ref={msgRef}
       onMouseOver={() => {
         setShowHour(true);
@@ -63,7 +72,15 @@ const Message = ({
         setShowHour(false);
       }}
     >
-      <div className={`flex items-center gap-2 ${sameUser ? "pt-2" : "pt-4"}`}>
+      {showOptions && (
+        <OptionsPopup
+          setShowOptions={setShowOptions}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+        />
+      )}
+
+      <div className={`flex items-center gap-2 ${sameUser ? "pt-3" : "pt-4"}`}>
         {!sameUser && (
           <img
             src={avatar}
@@ -80,20 +97,14 @@ const Message = ({
           {!sameUser && <h3 className="font-medium">{username}</h3>}
 
           {user.uid === uid && (
-            <div className="flex gap-5">
-              {!file && (
-                <AiFillEdit
-                  size={20}
-                  className="cursor-pointer text-slate-400 hover:text-cyan-500 transition-all ease-in-out"
-                  onClick={handleEdit}
-                />
-              )}
-              <AiFillDelete
-                size={20}
-                className="cursor-pointer text-slate-400 hover:text-cyan-500 transition-all ease-in-out"
-                onClick={handleDelete}
-              />
-            </div>
+            <BsThreeDots
+              className={`absolute text-lg text-slate-400 cursor-pointer ${
+                !sameUser ? "top-4 right-1" : "top-1 right-1"
+              } ${sameUser && !showHour ? "hidden" : " block"}`}
+              onClick={(e) => {
+                setShowOptions(true);
+              }}
+            />
           )}
         </div>
       </div>
@@ -122,7 +133,7 @@ const Message = ({
         </p>
       )}
       <p
-        className={`italic text-xs text-slate-400 self-end font-medium absolute bottom-0 right-1 ${
+        className={`italic text-xs text-slate-400 self-end font-medium absolute bottom-0 right-1  ${
           sameUser && !showHour ? "hidden" : " block"
         }`}
       >

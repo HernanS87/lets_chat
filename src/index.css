@@ -17,4 +17,8 @@
 @layer components{
   .top-neg-1{
       top: -25px;
-  }}
+  }
+  .bg-slate-850{
+    background: #1c2636 ;
+  }
+}
