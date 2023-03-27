@@ -21,4 +21,7 @@
   .bg-slate-850{
     background: #1c2636 ;
   }
+  .top-negative{
+    top: -40px;
+  }
 }

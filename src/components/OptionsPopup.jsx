@@ -1,14 +1,23 @@
 import { AiFillEdit } from "react-icons/ai";
 import { AiFillDelete } from "react-icons/ai";
 
-export default function OptionsPopup({setShowOptions, handleDelete, handleEdit}) {
+export default function OptionsPopup({
+  setShowOptions,
+  handleDelete,
+  handleEdit,
+  lastChildOptions,
+}) {
   return (
     <>
       <div
         className="modal-container w-full h-full fixed top-0 left-0 z-10 "
         onClick={() => setShowOptions(false)}
       ></div>
-      <div className="bg-slate-900 text-sm font-medium text-gray-400 z-50 p-2 flex flex-col absolute rounded top-0 right-0">
+      <div
+        className={`bg-slate-900 text-sm font-medium text-gray-400 z-50 p-2 flex flex-col absolute rounded right-0 ${
+          lastChildOptions ? "top-negative" : "top-0"
+        }`}
+      >
         <div
           className="flex justify-between w-40 py-1 px-1 rounded cursor-pointer hover:bg-cyan-500 hover:text-white transition-all ease-in-out mb-1 "
           onClick={() => {

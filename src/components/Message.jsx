@@ -26,6 +26,7 @@ const Message = ({
   const date = new Date(timestamp);
   const [showHour, setShowHour] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [lastChildOptions, setLastChildOptions] = useState(false);
 
   useEffect(() => {
     msgRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
@@ -77,6 +78,7 @@ const Message = ({
           setShowOptions={setShowOptions}
           handleDelete={handleDelete}
           handleEdit={handleEdit}
+          lastChildOptions={lastChildOptions}
         />
       )}
 
@@ -102,6 +104,12 @@ const Message = ({
                 !sameUser ? "top-4 right-1" : "top-1 right-1"
               } ${sameUser && !showHour ? "hidden" : " block"}`}
               onClick={(e) => {
+                console.log(e.pageY);
+                if (e.pageY > 620) {
+                  setLastChildOptions(true);
+                } else {
+                  setLastChildOptions(false);
+                }
                 setShowOptions(true);
               }}
             />
