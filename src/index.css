@@ -24,4 +24,163 @@
   .top-negative{
     top: -40px;
   }
+  .transition-opacity-400ms {
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 600ms;
 }
+.transition-transform-600ms {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 600ms;
+}
+}
+
+.slider-container {
+  --progress-bar-height: 5px;
+}
+.slider-container-record {
+  --progress-bar-height: 5px;
+}
+
+.slider-container {
+  --thumb-width: 16px;
+  --thumb-height: 16px;
+}
+.slider-container-record {
+  --thumb-width: 16px;
+  --thumb-height: 16px;
+}
+
+  /* Hide Original  */
+.range {
+  -webkit-appearance: none;
+  background-color: rgba(7, 244, 39, 0.881);
+  height: var(--progress-bar-height);
+  width: 100%;
+  cursor: pointer;
+  opacity: 0;
+  margin: 0 auto;
+}
+
+
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--thumb-width);
+  height: var(--thumb-height);
+
+  background: #ed06bb;
+  border: 1px solid #000000;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.slider-container {
+  position: relative;
+  width: 100%;
+  
+}
+.slider-container-record {
+  position: relative;
+  width: 100%;
+  
+}
+
+/* Background  */
+.slider-container::before {
+  content: '';
+  background-color: #0f1729;
+  width: 98%;
+  height: var(--progress-bar-height);
+  display: block;
+  position: absolute;
+  border-radius: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 1;
+}
+
+.slider-container-record::before {
+  content: '';
+  background-color: #0f1729;
+  width: 98%;
+  height: var(--progress-bar-height);
+  display: block;
+  position: absolute;
+  border-radius: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 1;
+}
+
+
+.thumb {
+  width: var(--thumb-width);
+  height: var(--thumb-height);
+  /* box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.753); */
+  z-index: 3;
+  background: #06b6d4;
+  position: absolute;
+  border-radius: 50%;
+  top: 50%;
+  opacity: 1;
+  transform: translate(0%, -50%);
+  pointer-events: none; /* Remove pointer events on thumb so user can click on the actual thumb beaneath it!  */
+  user-select: none; /*  Prevent Accidentally highlighting the number while sliding the cursor */ 
+  transition: 0.22s linear;
+}
+
+.thumb-record {
+  width: var(--thumb-width);
+  height: var(--thumb-height);
+  /* box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.753); */
+  z-index: 3;
+  background: #06b6d4;
+  position: absolute;
+  border-radius: 50%;
+  top: 50%;
+  opacity: 1;
+  transform: translate(0%, -50%);
+  pointer-events: none; /* Remove pointer events on thumb so user can click on the actual thumb beaneath it!  */
+  user-select: none; /*  Prevent Accidentally highlighting the number while sliding the cursor */ 
+  transition: 0.22s linear;
+}
+
+/* Custom Progress Bar  */
+.progress-bar-cover {
+  background-color: #06b6d4;
+  height: var(--progress-bar-height);
+  display: block;
+  position: absolute;
+  border-radius: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  user-select: none;
+  pointer-events: none;
+  transition: 0.22s linear
+
+}
+
+.progress-bar-cover-record {
+  background-color: #06b6d4;
+  height: var(--progress-bar-height);
+  display: block;
+  position: absolute;
+  border-radius: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  user-select: none;
+  pointer-events: none;
+  transition: 0.22s linear
+
+}
+/*
+PARA QUE EL SLIDER RECORD FUNCIONARA SIN EL INPUT LE TUVE QUE DAR DISPLAY FLEX AL CONTENEDOR DEL SLIDER-CONTAINER
+*/

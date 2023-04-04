@@ -8,9 +8,13 @@ import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { MdCancel } from "react-icons/md";
 import { AiFillPlusCircle } from "react-icons/ai";
+import { HiMicrophone } from "react-icons/hi";
+import { MdDelete } from "react-icons/md";
+import { IoPause, IoSend } from "react-icons/io5";
 import "react-toastify/dist/ReactToastify.css";
 import EmojiPicker from "emoji-picker-react";
 import ImagePopup from "./ImagePopup";
+import { useAudioContext } from "../context/AudioContext";
 
 const ChatForm = () => {
   const [showPicker, setShowPicker] = useState(false);
@@ -29,6 +33,36 @@ const ChatForm = () => {
     inputMessage,
     setInputMessage,
   } = useChatContext();
+
+  const {
+    activateMicro,
+    setActivateMicro,
+    isRecording,
+    recordingTime,
+    centesimas,
+    progressPercentage,
+    setProgressPercentage,
+    marginLeft,
+    setMarginLeft,
+    currentTimer,
+    startRecording,
+    stopRecording,
+    pauseRecording,
+    resumeRecording,
+    cancelRecording,
+  } = useAudioContext();
+
+  useEffect(() => {
+    currentTimer();
+    setProgressPercentage(((centesimas / 100) * 100) / 120);
+  }, [centesimas]);
+
+  useEffect(() => {
+    const thumbWidth = 18;
+    const centerThumb = (thumbWidth / 100) * progressPercentage * -1;
+
+    setMarginLeft(centerThumb);
+  }, [progressPercentage]);
 
   const handleMessage = async (e) => {
     e.preventDefault();
@@ -142,7 +176,9 @@ const ChatForm = () => {
       <form
         id="form"
         onSubmit={handleMessage}
-        className="flex items-center w-screen px-4 pb-4"
+        className={`flex items-center w-screen px-4 pb-4 transition duration-500 ${
+          activateMicro && "opacity-0 -translate-x-full"
+        }`}
       >
         <div className="flex items-center w-full relative">
           {cancelEdit && (
@@ -184,11 +220,8 @@ const ChatForm = () => {
               }
             }}
           />
-          <label
-            htmlFor="images"
-            className="absolute left-1 cursor-pointer "
-          >
-            <AiFillPlusCircle  className='text-2xl text-gray-900 dark:text-slate-300'/>
+          <label htmlFor="images" className="absolute left-1 cursor-pointer ">
+            <AiFillPlusCircle className="text-2xl text-gray-900 dark:text-slate-300" />
             <input
               type="file"
               className="hidden"
@@ -206,15 +239,86 @@ const ChatForm = () => {
           size={30}
           onClick={() => setShowPicker(!showPicker)}
         />
-
-        <button type="submit" className="bg-cyan-500 rounded-lg px-2 py-1">
+        <button
+          type=""
+          className={`bg-cyan-500 rounded-lg px-2 py-1 `}
+          onClick={() => {
+            if (!activateMicro && !inputMessage) {
+              startRecording();
+            }
+          }}
+        >
           <RiSendPlaneFill
             size={30}
             color={"#fff"}
-            className="cursor-pointer"
+            className={`${!inputMessage && "hidden"}`}
+          />
+          <HiMicrophone
+            size={30}
+            color={"#fff"}
+            className={`${inputMessage && "hidden"} `}
           />
         </button>
       </form>
+      
+
+      {/* AUDIORECORDER */}
+      
+      <div
+        className={`flex items-center justify-end gap-5 w-full px-4 pb-4 transition duration-500 absolute top-0 ${
+          !activateMicro && "opacity-0 translate-x-full"
+        } `}
+      >
+        <button>
+          <MdDelete className={`text-2xl`} onClick={cancelRecording} />
+        </button>
+
+        <span className="w-8 font-medium">{recordingTime}</span>
+
+        <div className="flex grow max-w-xs">
+          <div className="slider-container-record">
+            <div
+              style={{
+                width: `calc((${progressPercentage}%) - ${
+                  0.011 * progressPercentage
+                }%)`,
+                marginLeft: "0.5%",
+              }}
+              className="progress-bar-cover-record"
+            ></div>
+            <div
+              style={{
+                left: `${progressPercentage}%`,
+                marginLeft: `${marginLeft}px`,
+              }}
+              className="thumb-record"
+            ></div>
+          </div>
+        </div>
+
+        <button
+          className={``}
+          onClick={() => {
+            if (isRecording) {
+              pauseRecording();
+            } else {
+              resumeRecording();
+            }
+          }}
+        >
+          <HiMicrophone className={`text-2xl ${isRecording && "hidden"}`} />
+          <IoPause className={`text-2xl ${!isRecording && "hidden"}`} />
+        </button>
+
+        <button
+          className={`bg-cyan-500 rounded-lg px-2 py-1 `}
+          onClick={() => {
+            stopRecording();
+          }}
+        >
+          <RiSendPlaneFill size={30} color={"#fff"} />
+        </button>
+      </div>
     </>
   );
 };
