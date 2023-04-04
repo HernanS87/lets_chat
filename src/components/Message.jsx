@@ -30,14 +30,6 @@ const Message = ({
 
   useEffect(() => {
     msgRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
-
-    const handleEscape = (e) => {
-      console.log("escape");
-      if (e.keyCode === 27) {
-        setShowOptions(false);
-      }
-    };
-    document.addEventListener("keydown", handleEscape);
   }, []);
 
   const handleDelete = async () => {

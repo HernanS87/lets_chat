@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { AiFillEdit } from "react-icons/ai";
 import { AiFillDelete } from "react-icons/ai";
 
@@ -7,6 +8,21 @@ export default function OptionsPopup({
   handleEdit,
   lastChildOptions,
 }) {
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      console.log("escape");
+      if (e.keyCode === 27) {
+        setShowOptions(false);
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [])
+  
+
   return (
     <>
       <div
