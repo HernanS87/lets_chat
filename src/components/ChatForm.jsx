@@ -1,32 +1,32 @@
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { useEffect, useState, useRef } from "react";
-import { useAuthContext } from "../context/AuthContext";
 import { db } from "../firebase/firebase";
+import { useAuthContext } from "../context/AuthContext";
 import { useChatContext } from "../context/ChatContext";
+import { useAudioContext } from "../context/AudioContext";
 import { toast } from "react-toastify";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { MdCancel } from "react-icons/md";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { HiMicrophone } from "react-icons/hi";
-import { MdDelete } from "react-icons/md";
-import { IoPause, IoSend } from "react-icons/io5";
 import "react-toastify/dist/ReactToastify.css";
 import EmojiPicker from "emoji-picker-react";
 import ImagePopup from "./ImagePopup";
-import { useAudioContext } from "../context/AudioContext";
+import AudioRecorder from "./AudioRecorder";
 
 const ChatForm = () => {
   const [showPicker, setShowPicker] = useState(false);
   const [textAreaScroll, setTextAreaScroll] = useState(false);
   const [cancelEdit, setCancelEdit] = useState(false);
+  const [newAudio, setNewAudio] = useState(null);
   const { user } = useAuthContext();
   const txtAreaRef = useRef();
   const {
     activeChannel,
     msgToEdit,
     setMsgToEdit,
-    changeMsgToEdit,
+
     uploadFile,
     fileURL,
     setFileURL,
@@ -34,71 +34,53 @@ const ChatForm = () => {
     setInputMessage,
   } = useChatContext();
 
-  const {
-    activateMicro,
-    setActivateMicro,
-    isRecording,
-    recordingTime,
-    centesimas,
-    progressPercentage,
-    setProgressPercentage,
-    marginLeft,
-    setMarginLeft,
-    currentTimer,
-    startRecording,
-    stopRecording,
-    pauseRecording,
-    resumeRecording,
-    cancelRecording,
-  } = useAudioContext();
-
-  useEffect(() => {
-    currentTimer();
-    setProgressPercentage(((centesimas / 100) * 100) / 120);
-  }, [centesimas]);
-
-  useEffect(() => {
-    const thumbWidth = 18;
-    const centerThumb = (thumbWidth / 100) * progressPercentage * -1;
-
-    setMarginLeft(centerThumb);
-  }, [progressPercentage]);
+  const { activateMicro, startRecording } = useAudioContext();
 
   const handleMessage = async (e) => {
     e.preventDefault();
     const msgValue = inputMessage.trim();
     setInputMessage("");
     setCancelEdit(false);
-    if (msgValue || fileURL) {
+    if (msgValue || fileURL || newAudio) {
       if (msgToEdit) {
         const msgRef = doc(
           db,
           `canales/${activeChannel}/mensajes/${msgToEdit.id}`
         );
-        await updateDoc(msgRef, {
-          ...msgToEdit,
-          message: JSON.stringify(msgValue),
-          edited: true,
-        });
+        const imgURL = fileURL;
+        setFileURL("");
+        if (imgURL) {
+          await updateDoc(msgRef, {
+            ...msgToEdit,
+            message: JSON.stringify(msgValue),
+            file: imgURL,
+            edited: true,
+          });
+        } else {
+          await updateDoc(msgRef, {
+            ...msgToEdit,
+            message: JSON.stringify(msgValue),
+            edited: true,
+          });
+        }
+        setMsgToEdit("");
         toast.success("Mensaje editado correctamente!", {
           position: "top-center",
           autoClose: 1500,
         });
-        changeMsgToEdit("");
       } else {
         const msgRef = collection(db, `canales/${activeChannel}/mensajes`);
         const imgURL = fileURL;
         setFileURL("");
-        if (msgValue) {
-          await addDoc(msgRef, {
-            username: user.displayName,
-            uid: user.uid,
-            avatar: user.photoURL,
-            message: JSON.stringify(msgValue),
-            file: imgURL,
-            timestamp: Date.now(),
-          });
-        }
+        await addDoc(msgRef, {
+          username: user.displayName,
+          uid: user.uid,
+          avatar: user.photoURL,
+          message: JSON.stringify(msgValue),
+          file: imgURL,
+          timestamp: Date.now(),
+          audio: newAudio,
+        });
       }
     }
   };
@@ -184,9 +166,6 @@ const ChatForm = () => {
           {cancelEdit && (
             <div
               className="absolute top-neg-1 w-full bg-slate-900 text-xs text-slate-400 font-medium pl-2 py-1 rounded flex items-center cursor-pointer"
-              onKeyDown={(e) => {
-                console.log(e.key);
-              }}
               onClick={() => {
                 setMsgToEdit("");
                 setInputMessage("");
@@ -243,7 +222,7 @@ const ChatForm = () => {
           type=""
           className={`bg-cyan-500 rounded-lg px-2 py-1 `}
           onClick={() => {
-            if (!activateMicro && !inputMessage) {
+            if (!activateMicro && !inputMessage && !fileURL) {
               startRecording();
             }
           }}
@@ -251,74 +230,19 @@ const ChatForm = () => {
           <RiSendPlaneFill
             size={30}
             color={"#fff"}
-            className={`${!inputMessage && "hidden"}`}
+            className={`${!inputMessage && !fileURL && "hidden"}`}
           />
           <HiMicrophone
             size={30}
             color={"#fff"}
-            className={`${inputMessage && "hidden"} `}
+            className={`${(inputMessage || fileURL) && "hidden"} `}
           />
         </button>
       </form>
-      
 
       {/* AUDIORECORDER */}
-      
-      <div
-        className={`flex items-center justify-end gap-5 w-full px-4 pb-4 transition duration-500 absolute top-0 ${
-          !activateMicro && "opacity-0 translate-x-full"
-        } `}
-      >
-        <button>
-          <MdDelete className={`text-2xl`} onClick={cancelRecording} />
-        </button>
 
-        <span className="w-8 font-medium">{recordingTime}</span>
-
-        <div className="flex grow max-w-xs">
-          <div className="slider-container-record">
-            <div
-              style={{
-                width: `calc((${progressPercentage}%) - ${
-                  0.011 * progressPercentage
-                }%)`,
-                marginLeft: "0.5%",
-              }}
-              className="progress-bar-cover-record"
-            ></div>
-            <div
-              style={{
-                left: `${progressPercentage}%`,
-                marginLeft: `${marginLeft}px`,
-              }}
-              className="thumb-record"
-            ></div>
-          </div>
-        </div>
-
-        <button
-          className={``}
-          onClick={() => {
-            if (isRecording) {
-              pauseRecording();
-            } else {
-              resumeRecording();
-            }
-          }}
-        >
-          <HiMicrophone className={`text-2xl ${isRecording && "hidden"}`} />
-          <IoPause className={`text-2xl ${!isRecording && "hidden"}`} />
-        </button>
-
-        <button
-          className={`bg-cyan-500 rounded-lg px-2 py-1 `}
-          onClick={() => {
-            stopRecording();
-          }}
-        >
-          <RiSendPlaneFill size={30} color={"#fff"} />
-        </button>
-      </div>
+      <AudioRecorder {...newAudio} />
     </>
   );
 };

@@ -21,7 +21,7 @@ const Message = ({
 }) => {
   const msgRef = useRef();
   const { user } = useAuthContext();
-  const { activeChannel, changeMsgToEdit } = useChatContext();
+  const { activeChannel, setMsgToEdit, setFileURL } = useChatContext();
   const options = { hour: "numeric", minute: "numeric" };
   const date = new Date(timestamp);
   const [showHour, setShowHour] = useState(false);
@@ -42,7 +42,7 @@ const Message = ({
   };
 
   const handleEdit = () => {
-    changeMsgToEdit({
+    setMsgToEdit({
       username,
       avatar,
       timestamp,
@@ -52,6 +52,7 @@ const Message = ({
       edited,
       file,
     });
+    setFileURL(file);
   };
 
   return (
