@@ -36,8 +36,8 @@ const ChatForm = () => {
 
   const { activateMicro, startRecording } = useAudioContext();
 
-  const handleMessage = async (e) => {
-    e.preventDefault();
+  const handleMessage = async () => {
+    console.log('handleMessage')
     const msgValue = inputMessage.trim();
     setInputMessage("");
     setCancelEdit(false);
@@ -49,20 +49,12 @@ const ChatForm = () => {
         );
         const imgURL = fileURL;
         setFileURL("");
-        if (imgURL) {
-          await updateDoc(msgRef, {
-            ...msgToEdit,
-            message: JSON.stringify(msgValue),
-            file: imgURL,
-            edited: true,
-          });
-        } else {
-          await updateDoc(msgRef, {
-            ...msgToEdit,
-            message: JSON.stringify(msgValue),
-            edited: true,
-          });
-        }
+        await updateDoc(msgRef, {
+          ...msgToEdit,
+          message: JSON.stringify(msgValue),
+          file: imgURL,
+          edited: true,
+        });
         setMsgToEdit("");
         toast.success("Mensaje editado correctamente!", {
           position: "top-center",
@@ -115,6 +107,7 @@ const ChatForm = () => {
     if (e.keyCode === 27) {
       setMsgToEdit("");
       setInputMessage("");
+      setFileURL("");
       setCancelEdit(false);
     }
   };
@@ -157,7 +150,7 @@ const ChatForm = () => {
       )}
       <form
         id="form"
-        onSubmit={handleMessage}
+        onSubmit={(e) => {e.preventDefault()}}
         className={`flex items-center w-screen px-4 pb-4 transition duration-500 ${
           activateMicro && "opacity-0 -translate-x-full"
         }`}
@@ -169,6 +162,7 @@ const ChatForm = () => {
               onClick={() => {
                 setMsgToEdit("");
                 setInputMessage("");
+                setFileURL("");
                 setCancelEdit(false);
               }}
             >
@@ -224,6 +218,8 @@ const ChatForm = () => {
           onClick={() => {
             if (!activateMicro && !inputMessage && !fileURL) {
               startRecording();
+            } else {
+              handleMessage()
             }
           }}
         >
