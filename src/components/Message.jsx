@@ -7,6 +7,7 @@ import { useChatContext } from "../context/ChatContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OptionsPopup from "./OptionsPopup";
+import AudioPlayer from "./AudioPlayer";
 
 const Message = ({
   username,
@@ -18,6 +19,7 @@ const Message = ({
   edited,
   file,
   sameUser,
+  audio,
 }) => {
   const msgRef = useRef();
   const { user } = useAuthContext();
@@ -72,6 +74,7 @@ const Message = ({
           handleDelete={handleDelete}
           handleEdit={handleEdit}
           lastChildOptions={lastChildOptions}
+          audio={audio}
         />
       )}
 
@@ -114,6 +117,7 @@ const Message = ({
           <img src={file} alt={uid} className="max-w-xs lg:max-w-xl pt-3" />
         </a>
       )}
+      {audio && <AudioPlayer {...audio}/>}
       {message && (
         <p className={`${!sameUser && "pt-3"} break-words `}>
           {message.split("\\n").length > 1

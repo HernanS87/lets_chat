@@ -7,8 +7,8 @@ export default function OptionsPopup({
   handleDelete,
   handleEdit,
   lastChildOptions,
+  audio,
 }) {
-
   useEffect(() => {
     const handleEscape = (e) => {
       console.log("escape");
@@ -20,8 +20,7 @@ export default function OptionsPopup({
     return () => {
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [])
-  
+  }, []);
 
   return (
     <>
@@ -34,16 +33,18 @@ export default function OptionsPopup({
           lastChildOptions ? "top-negative" : "top-0"
         }`}
       >
-        <div
-          className="flex justify-between w-40 py-1 px-1 rounded cursor-pointer hover:bg-cyan-500 hover:text-white transition-all ease-in-out mb-1 "
-          onClick={() => {
-            setShowOptions(false);
-            handleEdit();
-          }}
-        >
-          <span>Editar mensaje</span>
-          <AiFillEdit size={20} />
-        </div>
+        {!audio && (
+          <div
+            className="flex justify-between w-40 py-1 px-1 rounded cursor-pointer hover:bg-cyan-500 hover:text-white transition-all ease-in-out mb-1 "
+            onClick={() => {
+              setShowOptions(false);
+              handleEdit();
+            }}
+          >
+            <span>Editar mensaje</span>
+            <AiFillEdit size={20} />
+          </div>
+        )}
         <div
           className="flex justify-between w-40 py-1 px-1 rounded cursor-pointer hover:bg-red-500 hover:text-white transition-all ease-in-out"
           onClick={() => {

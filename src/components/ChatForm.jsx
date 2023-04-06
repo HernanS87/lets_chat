@@ -19,7 +19,6 @@ const ChatForm = () => {
   const [showPicker, setShowPicker] = useState(false);
   const [textAreaScroll, setTextAreaScroll] = useState(false);
   const [cancelEdit, setCancelEdit] = useState(false);
-  const [newAudio, setNewAudio] = useState(null);
   const { user } = useAuthContext();
   const txtAreaRef = useRef();
   const {
@@ -34,7 +33,7 @@ const ChatForm = () => {
     setInputMessage,
   } = useChatContext();
 
-  const { activateMicro, startRecording } = useAudioContext();
+  const { activateMicro, startRecording, newAudio } = useAudioContext();
 
   const handleMessage = async () => {
     console.log('handleMessage')
@@ -238,7 +237,7 @@ const ChatForm = () => {
 
       {/* AUDIORECORDER */}
 
-      <AudioRecorder {...newAudio} />
+      <AudioRecorder {...newAudio} activeChannel={activeChannel} />
     </>
   );
 };

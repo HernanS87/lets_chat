@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { IoPlay, IoPause } from "react-icons/io5";
 
-export default function AudioPlayer() {
+export default function AudioPlayer({ urlStream, duration }) {
   const audio = useRef(null);
   const [progress, setProgress] = useState(0);
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [marginLeft, setMarginLeft] = useState(0);
-  const [duration, setDuration] = useState(0);
   const [timer, setTimer] = useState(null);
   const [totalTime, setTotalTime] = useState(null);
   const [activateTimer, setActivateTimer] = useState(false);
@@ -14,8 +13,8 @@ export default function AudioPlayer() {
   const [wasPlaying, setWasPlaying] = useState(false);
 
   const getTimer = (e) => {
-    const totalMin = Math.floor(audio.current.duration / 60);
-    const totalSec = Math.floor(audio.current.duration - totalMin * 60)
+    const totalMin = Math.floor(duration / 60);
+    const totalSec = Math.floor(duration - totalMin * 60)
       .toString()
       .padStart(2, "0");
     const currentMin = Math.floor(e.target.currentTime / 60);
@@ -35,28 +34,23 @@ export default function AudioPlayer() {
   }, [progressPercentage]);
 
   return (
-    <div className="p-4 bg-gray-200">
+    <div className=" m-1">
       <div className="relative flex gap-5 py-4 pl-4 pr-24 text-white rounded select-none bg-slate-800">
         <audio
           ref={audio}
-          src={''}
+          src={urlStream}
           onLoadedData={(e) => {
-            console.log(audio.current.duration);
-            setDuration(audio.current.duration);
             getTimer(e); //cuando cree el objeto con la urlStream y la duracion del audio esta función la puedo eliminar de acá
           }}
           onTimeUpdate={(e) => {
-            if (e.target.currentTime == audio.current.duration) {
-              setProgress(0);
-              setProgressPercentage(0);
-              setIsPlaying(false);
-            } else {
-              setProgress(e.target.currentTime);
-              setProgressPercentage(
-                (e.target.currentTime * 100) / audio.current.duration
-              );
-            }
+            setProgress(e.target.currentTime);
+            setProgressPercentage((e.target.currentTime * 100) / duration);
             getTimer(e);
+          }}
+          onEnded={() => {
+            setProgress(0);
+            setProgressPercentage(0);
+            setIsPlaying(false);
           }}
         />
         <div className="absolute text-xs font-medium text-gray-400 bottom-2 timer left-16">

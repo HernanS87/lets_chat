@@ -1,14 +1,19 @@
 import { createContext, useContext, useState, useRef } from "react";
-import { storage } from '../firebase/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { v4 } from 'uuid';
+import { db, storage } from "../firebase/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { v4 } from "uuid";
+import { addDoc, collection } from "firebase/firestore";
+import { useAuthContext } from "./AuthContext";
 
 const AudioContext = createContext();
 
 export const AudioContextProvider = ({ children }) => {
+  const {user} = useAuthContext()
+
   const [activateMicro, setActivateMicro] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
+  const [newAudio, setNewAudio] = useState(null);
 
   const [centesimas, setCentesimas] = useState(0);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -47,8 +52,6 @@ export const AudioContextProvider = ({ children }) => {
     }
   };
 
-  
-
   const startRecording = async () => {
     setActivateMicro(true);
     setIsRecording(true);
@@ -58,7 +61,7 @@ export const AudioContextProvider = ({ children }) => {
     mediaRecorderRef.current.start();
   };
 
-  const stopRecording = () => {
+  const stopRecording = async (activeChannel) => {
     setActivateMicro(false);
     setIsRecording(false);
     stopTimer();
@@ -68,7 +71,23 @@ export const AudioContextProvider = ({ children }) => {
       const audioBlob = e.data;
       const audioUrl = await uploadAudio(audioBlob);
       console.log("url de storage", audioUrl);
+
+      const msgRef = collection(db, `canales/${activeChannel}/mensajes`);
+      await addDoc(msgRef, {
+        username: user.displayName,
+        uid: user.uid,
+        avatar: user.photoURL,
+        message: '',
+        file: '',
+        timestamp: Date.now(),
+        audio: {
+          urlStream: audioUrl,
+          duration: centesimas / 100,
+        },
+      });
+      console.log('se envio el audio');
     });
+
   };
 
   const pauseRecording = () => {
@@ -91,8 +110,6 @@ export const AudioContextProvider = ({ children }) => {
     setActivateMicro(false);
   };
 
-  
-
   return (
     <AudioContext.Provider
       value={{
@@ -102,6 +119,8 @@ export const AudioContextProvider = ({ children }) => {
         setIsRecording,
         centesimas,
         mediaRecorderRef,
+        newAudio,
+        setNewAudio,
         setProgressPercentage,
         recordingTime,
         progressPercentage,
