@@ -117,7 +117,7 @@ const Message = ({
           <img src={file} alt={uid} className="max-w-xs lg:max-w-xl pt-3" />
         </a>
       )}
-      {audio && <AudioPlayer {...audio}/>}
+      {audio && <AudioPlayer {...audio} id={id}/>}
       {message && (
         <p className={`${!sameUser && "pt-3"} break-words `}>
           {message.split("\\n").length > 1

@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { IoPlay, IoPause } from "react-icons/io5";
+import { useAudioContext } from "../context/AudioContext";
 
-export default function AudioPlayer({ urlStream, duration }) {
+export default function AudioPlayer({ urlStream, duration, id }) {
   const audio = useRef(null);
+  const { justOnePlayer, setJustOnePlayer } = useAudioContext();
   const [progress, setProgress] = useState(0);
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [marginLeft, setMarginLeft] = useState(0);
@@ -33,16 +35,25 @@ export default function AudioPlayer({ urlStream, duration }) {
     setMarginLeft(centerThumb);
   }, [progressPercentage]);
 
+  useEffect(() => {
+    if (justOnePlayer !== id) {
+      audio.current.pause();
+      setIsPlaying(false);
+      setActivateTimer(false)
+    }
+  }, [justOnePlayer]);
+
   return (
     <div className=" m-1">
-      <div className="relative flex gap-5 py-4 pl-4 pr-24 text-white rounded select-none bg-slate-800">
+      <div className="relative w-64 flex gap-5 py-3 pl-4 pr-4 text-white rounded-full select-none bg-slate-900">
         <audio
           ref={audio}
           src={urlStream}
           onLoadedData={(e) => {
-            getTimer(e); //cuando cree el objeto con la urlStream y la duracion del audio esta función la puedo eliminar de acá
+            getTimer(e);
           }}
           onTimeUpdate={(e) => {
+            // console.log(e.target.currentTime)
             setProgress(e.target.currentTime);
             setProgressPercentage((e.target.currentTime * 100) / duration);
             getTimer(e);
@@ -53,12 +64,13 @@ export default function AudioPlayer({ urlStream, duration }) {
             setIsPlaying(false);
           }}
         />
-        <div className="absolute text-xs font-medium text-gray-400 bottom-2 timer left-16">
+        <div className="absolute text-xs font-semibold text-gray-400 bottom-1 timer left-18">
           <p>{activateTimer ? timer : totalTime}</p>
         </div>
         <button
           onClick={() => {
             if (!isPlaying) {
+              setJustOnePlayer(id);
               audio.current.play();
               setIsPlaying(true);
               setActivateTimer(true);

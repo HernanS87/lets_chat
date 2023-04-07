@@ -22,6 +22,8 @@ export const AudioContextProvider = ({ children }) => {
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [marginLeft, setMarginLeft] = useState(0);
 
+  const [justOnePlayer, setJustOnePlayer] = useState(null)
+
   const uploadAudio = async (file) => {
     const storageRef = ref(storage, `audio/${v4()}`);
     await uploadBytes(storageRef, file);
@@ -132,6 +134,8 @@ export const AudioContextProvider = ({ children }) => {
         pauseRecording,
         resumeRecording,
         cancelRecording,
+        justOnePlayer,
+        setJustOnePlayer,
       }}
     >
       {children}
