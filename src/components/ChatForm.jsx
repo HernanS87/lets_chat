@@ -55,10 +55,6 @@ const ChatForm = () => {
           edited: true,
         });
         setMsgToEdit("");
-        toast.success("Mensaje editado correctamente!", {
-          position: "top-center",
-          autoClose: 1500,
-        });
       } else {
         const msgRef = collection(db, `canales/${activeChannel}/mensajes`);
         const imgURL = fileURL;

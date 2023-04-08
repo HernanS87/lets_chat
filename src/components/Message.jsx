@@ -37,10 +37,6 @@ const Message = ({
   const handleDelete = async () => {
     const docRef = doc(db, `canales/${activeChannel}/mensajes/${id}`);
     await deleteDoc(docRef);
-    toast.success("Mensaje eliminado correctamente!", {
-      position: "top-center",
-      autoClose: 1500,
-    });
   };
 
   const handleEdit = () => {
