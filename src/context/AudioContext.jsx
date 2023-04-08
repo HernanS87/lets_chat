@@ -4,27 +4,24 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
 import { addDoc, collection } from "firebase/firestore";
 import { useAuthContext } from "./AuthContext";
+import { useChatContext } from "./ChatContext";
 
 const AudioContext = createContext();
 
 export const AudioContextProvider = ({ children }) => {
   const { user } = useAuthContext();
+  const { activeChannel } = useChatContext();
 
   const [activateMicro, setActivateMicro] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef(null);
   const [newAudio, setNewAudio] = useState(null);
 
-  const [centesimas, setCentesimas] = useState(0);
+  const [decimas, setDecimas] = useState(0);
   const [recordingTime, setRecordingTime] = useState(0);
   const intervalRef = useRef(null);
 
-  const [progressPercentage, setProgressPercentage] = useState(0);
-  const [marginLeft, setMarginLeft] = useState(0);
-
   const [justOnePlayer, setJustOnePlayer] = useState(null);
-
-  const [channel, setChannel] = useState(null);
 
   const uploadAudio = async (file) => {
     const storageRef = ref(storage, `audio/${v4()}`);
@@ -34,26 +31,12 @@ export const AudioContextProvider = ({ children }) => {
 
   const startTimer = () => {
     intervalRef.current = setInterval(() => {
-      setCentesimas((centesimas) => centesimas + 1);
+      setDecimas((decimas) => decimas + 1);
     }, 100);
   };
 
   const stopTimer = () => {
     clearInterval(intervalRef.current);
-  };
-
-  const currentTimer = () => {
-    const segundos = centesimas / 10;
-    const currentMin = Math.floor(segundos / 60);
-    const currentSec = Math.floor(segundos - currentMin * 60)
-      .toString()
-      .padStart(2, "0");
-
-    setRecordingTime(`${currentMin}:${currentSec}`);
-
-    if (segundos === 120.5) {
-      stopRecording(channel);
-    }
   };
 
   const startRecording = async () => {
@@ -65,19 +48,19 @@ export const AudioContextProvider = ({ children }) => {
     mediaRecorderRef.current.start();
   };
 
-  const stopRecording = async (activeChannel) => {
+  const stopRecording = async (channel) => {
     setActivateMicro(false);
     setIsRecording(false);
     mediaRecorderRef.current.stop();
-    console.log(centesimas / 10);
+    console.log(decimas / 10);
     stopTimer();
-    setCentesimas(0);
+    setDecimas(0);
     mediaRecorderRef.current.addEventListener("dataavailable", async (e) => {
       const audioBlob = e.data;
       const audioUrl = await uploadAudio(audioBlob);
       console.log("url de storage", audioUrl);
 
-      const msgRef = collection(db, `canales/${activeChannel}/mensajes`);
+      const msgRef = collection(db, `canales/${channel}/mensajes`);
       await addDoc(msgRef, {
         username: user.displayName,
         uid: user.uid,
@@ -87,7 +70,7 @@ export const AudioContextProvider = ({ children }) => {
         timestamp: Date.now(),
         audio: {
           urlStream: audioUrl,
-          duration: centesimas / 10,
+          duration: decimas / 10,
         },
       });
       console.log("se envio el audio");
@@ -97,6 +80,7 @@ export const AudioContextProvider = ({ children }) => {
   const pauseRecording = () => {
     mediaRecorderRef.current.pause();
     stopTimer();
+    setDecimas(decimas + 0.3);
     setIsRecording(false);
   };
 
@@ -108,10 +92,24 @@ export const AudioContextProvider = ({ children }) => {
 
   const cancelRecording = () => {
     stopTimer();
-    setCentesimas(0);
+    setDecimas(0);
     mediaRecorderRef.current.stop();
     setIsRecording(false);
     setActivateMicro(false);
+  };
+
+  const currentTimer = () => {
+    const segundos = decimas / 10;
+    const currentMin = Math.floor(segundos / 60);
+    const currentSec = Math.floor(segundos - currentMin * 60)
+      .toString()
+      .padStart(2, "0");
+
+    setRecordingTime(`${currentMin}:${currentSec}`);
+
+    if (segundos === 120.5) {
+      stopRecording(activeChannel);
+    }
   };
 
   return (
@@ -121,15 +119,11 @@ export const AudioContextProvider = ({ children }) => {
         setActivateMicro,
         isRecording,
         setIsRecording,
-        centesimas,
+        decimas,
         mediaRecorderRef,
         newAudio,
         setNewAudio,
-        setProgressPercentage,
         recordingTime,
-        progressPercentage,
-        marginLeft,
-        setMarginLeft,
         currentTimer,
         startRecording,
         stopRecording,
@@ -138,7 +132,6 @@ export const AudioContextProvider = ({ children }) => {
         cancelRecording,
         justOnePlayer,
         setJustOnePlayer,
-        setChannel,
       }}
     >
       {children}

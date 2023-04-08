@@ -7,7 +7,6 @@ export default function AudioPlayer({ urlStream, duration, id }) {
   const { justOnePlayer, setJustOnePlayer } = useAudioContext();
   const [progress, setProgress] = useState(0);
   const [progressPercentage, setProgressPercentage] = useState(0);
-  const [marginLeft, setMarginLeft] = useState(0);
   const [timer, setTimer] = useState(null);
   const [totalTime, setTotalTime] = useState(null);
   const [activateTimer, setActivateTimer] = useState(false);
@@ -29,17 +28,10 @@ export default function AudioPlayer({ urlStream, duration, id }) {
   };
 
   useEffect(() => {
-    const thumbWidth = 18;
-    const centerThumb = (thumbWidth / 100) * progressPercentage * -1;
-
-    setMarginLeft(centerThumb);
-  }, [progressPercentage]);
-
-  useEffect(() => {
     if (justOnePlayer !== id) {
       audio.current.pause();
       setIsPlaying(false);
-      setActivateTimer(false)
+      setActivateTimer(false);
     }
   }, [justOnePlayer]);
 
@@ -53,7 +45,7 @@ export default function AudioPlayer({ urlStream, duration, id }) {
             getTimer(e);
           }}
           onTimeUpdate={(e) => {
-            // console.log(e.target.currentTime)
+            console.log(e.target.currentTime);
             setProgress(e.target.currentTime);
             setProgressPercentage((e.target.currentTime * 100) / duration);
             getTimer(e);
@@ -101,7 +93,7 @@ export default function AudioPlayer({ urlStream, duration, id }) {
           <div
             style={{
               left: `${progressPercentage}%`,
-              marginLeft: `${marginLeft}px`,
+              marginLeft: `${(12 / 100) * progressPercentage * -1}px`,
             }}
             className="thumb"
           ></div>

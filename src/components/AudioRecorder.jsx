@@ -3,41 +3,27 @@ import { MdDelete } from "react-icons/md";
 import { IoPause } from "react-icons/io5";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { HiMicrophone } from "react-icons/hi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function AudioRecorder({ activeChannel }) {
   const {
     activateMicro,
     isRecording,
     recordingTime,
-    centesimas,
-    progressPercentage,
-    setProgressPercentage,
-    marginLeft,
-    setMarginLeft,
+    decimas,
     currentTimer,
     stopRecording,
     pauseRecording,
     resumeRecording,
     cancelRecording,
-    setChannel,
   } = useAudioContext();
+
+  const [progressPercentage, setProgressPercentage] = useState(0);
 
   useEffect(() => {
     currentTimer();
-    setProgressPercentage(((centesimas / 10) * 100) / 120);
-  }, [centesimas]);
-
-  useEffect(() => {
-    const thumbWidth = 18;
-    const centerThumb = (thumbWidth / 100) * progressPercentage * -1;
-
-    setMarginLeft(centerThumb);
-  }, [progressPercentage]);
-
-  useEffect(() => {
-    setChannel(activeChannel);
-  }, []);
+    setProgressPercentage(((decimas / 10) * 100) / 120);
+  }, [decimas]);
 
   return (
     <div
@@ -65,7 +51,7 @@ export default function AudioRecorder({ activeChannel }) {
           <div
             style={{
               left: `${progressPercentage}%`,
-              marginLeft: `${marginLeft}px`,
+              marginLeft: `${(12 / 100) * progressPercentage * -1}px`,
             }}
             className="thumb-record"
           ></div>

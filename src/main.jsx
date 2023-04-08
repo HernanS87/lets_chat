@@ -11,11 +11,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthContextProvider>
-        <AudioContextProvider>
-          <ChatContextProvider>
+        <ChatContextProvider>
+          <AudioContextProvider>
             <App />
-          </ChatContextProvider>
-        </AudioContextProvider>
+          </AudioContextProvider>
+        </ChatContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
   </React.StrictMode>
