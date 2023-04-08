@@ -20,11 +20,12 @@ export default function AudioRecorder({ activeChannel }) {
     pauseRecording,
     resumeRecording,
     cancelRecording,
+    setChannel,
   } = useAudioContext();
 
   useEffect(() => {
     currentTimer();
-    setProgressPercentage(((centesimas / 100) * 100) / 120);
+    setProgressPercentage(((centesimas / 10) * 100) / 120);
   }, [centesimas]);
 
   useEffect(() => {
@@ -33,6 +34,10 @@ export default function AudioRecorder({ activeChannel }) {
 
     setMarginLeft(centerThumb);
   }, [progressPercentage]);
+
+  useEffect(() => {
+    setChannel(activeChannel);
+  }, []);
 
   return (
     <div
@@ -83,7 +88,7 @@ export default function AudioRecorder({ activeChannel }) {
 
       <button
         className={`bg-cyan-500 rounded-lg px-2 py-1 `}
-        onClick={ () => {
+        onClick={() => {
           stopRecording(activeChannel);
         }}
       >

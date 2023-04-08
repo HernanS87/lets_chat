@@ -8,7 +8,7 @@ import { useAuthContext } from "./AuthContext";
 const AudioContext = createContext();
 
 export const AudioContextProvider = ({ children }) => {
-  const {user} = useAuthContext()
+  const { user } = useAuthContext();
 
   const [activateMicro, setActivateMicro] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -22,7 +22,9 @@ export const AudioContextProvider = ({ children }) => {
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [marginLeft, setMarginLeft] = useState(0);
 
-  const [justOnePlayer, setJustOnePlayer] = useState(null)
+  const [justOnePlayer, setJustOnePlayer] = useState(null);
+
+  const [channel, setChannel] = useState(null);
 
   const uploadAudio = async (file) => {
     const storageRef = ref(storage, `audio/${v4()}`);
@@ -33,7 +35,7 @@ export const AudioContextProvider = ({ children }) => {
   const startTimer = () => {
     intervalRef.current = setInterval(() => {
       setCentesimas((centesimas) => centesimas + 1);
-    }, 10);
+    }, 100);
   };
 
   const stopTimer = () => {
@@ -41,7 +43,7 @@ export const AudioContextProvider = ({ children }) => {
   };
 
   const currentTimer = () => {
-    const segundos = centesimas / 100;
+    const segundos = centesimas / 10;
     const currentMin = Math.floor(segundos / 60);
     const currentSec = Math.floor(segundos - currentMin * 60)
       .toString()
@@ -50,7 +52,7 @@ export const AudioContextProvider = ({ children }) => {
     setRecordingTime(`${currentMin}:${currentSec}`);
 
     if (segundos === 120.5) {
-      stopRecording();
+      stopRecording(channel);
     }
   };
 
@@ -66,9 +68,10 @@ export const AudioContextProvider = ({ children }) => {
   const stopRecording = async (activeChannel) => {
     setActivateMicro(false);
     setIsRecording(false);
+    mediaRecorderRef.current.stop();
+    console.log(centesimas / 10);
     stopTimer();
     setCentesimas(0);
-    mediaRecorderRef.current.stop();
     mediaRecorderRef.current.addEventListener("dataavailable", async (e) => {
       const audioBlob = e.data;
       const audioUrl = await uploadAudio(audioBlob);
@@ -79,17 +82,16 @@ export const AudioContextProvider = ({ children }) => {
         username: user.displayName,
         uid: user.uid,
         avatar: user.photoURL,
-        message: '',
-        file: '',
+        message: "",
+        file: "",
         timestamp: Date.now(),
         audio: {
           urlStream: audioUrl,
-          duration: centesimas / 100,
+          duration: centesimas / 10,
         },
       });
-      console.log('se envio el audio');
+      console.log("se envio el audio");
     });
-
   };
 
   const pauseRecording = () => {
@@ -136,6 +138,7 @@ export const AudioContextProvider = ({ children }) => {
         cancelRecording,
         justOnePlayer,
         setJustOnePlayer,
+        setChannel,
       }}
     >
       {children}
