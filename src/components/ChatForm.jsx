@@ -27,6 +27,8 @@ const ChatForm = () => {
     handleFileChange,
     cancelEdit,
     setCancelEdit,
+    checkSize,
+    setCheckSize,
   } = useChatContext();
 
   const { activateMicro, startRecording } = useAudioContext();
@@ -36,29 +38,7 @@ const ChatForm = () => {
     setInputMessage((prevInputMessage) => prevInputMessage + ` ${emoji}`);
   };
 
-  const handleEscape = (e) => {
-    if (e.keyCode === 27) {
-      setMsgToEdit("");
-      setInputMessage("");
-      setFileURL("");
-      setCancelEdit(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleEscape);
-
-    if (msgToEdit) {
-      setInputMessage(msgToEdit.message);
-      setCancelEdit(true);
-    }
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [msgToEdit]);
-
-  // Este useEffect ajusta el tamaño del textArea
-  useEffect(() => {
+  const adjustSize = () => {
     if (txtAreaRef.current.scrollHeight > 40 && inputMessage) {
       txtAreaRef.current.style.height = "auto";
       txtAreaRef.current.style.height = txtAreaRef.current.scrollHeight + "px";
@@ -71,7 +51,38 @@ const ChatForm = () => {
       txtAreaRef.current.style.height = "32px";
       setTextAreaScroll(false);
     }
-  }, [inputMessage]);
+  };
+
+  const sendEditedMsg = () => {
+    setMsgToEdit("");
+    setInputMessage("");
+    setCheckSize("");
+    setFileURL("");
+    setCancelEdit(false);
+  };
+  const handleEscape = (e) => {
+    if (e.keyCode === 27) {
+      sendEditedMsg();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleEscape);
+
+    if (msgToEdit) {
+      setInputMessage(msgToEdit.message);
+      setCheckSize(msgToEdit.message);
+      setCancelEdit(true);
+    }
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [msgToEdit]);
+
+  // Este useEffect ajusta el tamaño del textArea
+  useEffect(() => {
+    adjustSize();
+  }, [checkSize]);
 
   return (
     <>
@@ -94,12 +105,7 @@ const ChatForm = () => {
           {cancelEdit && (
             <div
               className="absolute top-neg-1 w-full bg-slate-900 text-xs text-slate-400 font-medium pl-2 py-1 rounded flex items-center cursor-pointer"
-              onClick={() => {
-                setMsgToEdit("");
-                setInputMessage("");
-                setFileURL("");
-                setCancelEdit(false);
-              }}
+              onClick={sendEditedMsg}
             >
               <MdCancel size={15} className="mr-1" />
               Editando mensaje
@@ -119,7 +125,10 @@ const ChatForm = () => {
                 : "overflow-y-hidden"
             }`}
             value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
+            onChange={(e) => {
+              setInputMessage(e.target.value);
+              adjustSize();
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();

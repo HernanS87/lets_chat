@@ -16,6 +16,8 @@ export const ChatContextProvider = ({ children }) => {
   const [popupUser, setPopupUser] = useState(false);
   const navigate = useNavigate();
 
+  const [checkSize, setCheckSize] = useState("");
+
   const [cancelEdit, setCancelEdit] = useState(false);
   const { user } = useAuthContext();
 
@@ -33,6 +35,7 @@ export const ChatContextProvider = ({ children }) => {
   const handleMessage = async (newAudio = null) => {
     const msgValue = inputMessage.trim();
     setInputMessage("");
+    setCheckSize("");
     setCancelEdit(false);
     if (msgValue || fileURL || newAudio) {
       if (msgToEdit) {
@@ -105,6 +108,8 @@ export const ChatContextProvider = ({ children }) => {
         handleFileChange,
         cancelEdit,
         setCancelEdit,
+        checkSize,
+        setCheckSize,
       }}
     >
       {children}
