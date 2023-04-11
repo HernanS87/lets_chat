@@ -1,16 +1,13 @@
 import { createContext, useContext, useState, useRef } from "react";
-import { db, storage } from "../firebase/firebase";
+import { storage } from "../firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
-import { addDoc, collection } from "firebase/firestore";
-import { useAuthContext } from "./AuthContext";
 import { useChatContext } from "./ChatContext";
 
 const AudioContext = createContext();
 
 export const AudioContextProvider = ({ children }) => {
-  const { user } = useAuthContext();
-  const { activeChannel } = useChatContext();
+  const { handleMessage } = useChatContext();
 
   const [activateMicro, setActivateMicro] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -48,31 +45,22 @@ export const AudioContextProvider = ({ children }) => {
     mediaRecorderRef.current.start();
   };
 
-  const stopRecording = async (channel) => {
+  const stopRecording = async () => {
     setActivateMicro(false);
     setIsRecording(false);
     mediaRecorderRef.current.stop();
+    setDecimas(0);
     console.log(decimas / 10);
     stopTimer();
-    setDecimas(0);
     mediaRecorderRef.current.addEventListener("dataavailable", async (e) => {
       const audioBlob = e.data;
       const audioUrl = await uploadAudio(audioBlob);
       console.log("url de storage", audioUrl);
-
-      const msgRef = collection(db, `canales/${channel}/mensajes`);
-      await addDoc(msgRef, {
-        username: user.displayName,
-        uid: user.uid,
-        avatar: user.photoURL,
-        message: "",
-        file: "",
-        timestamp: Date.now(),
-        audio: {
-          urlStream: audioUrl,
-          duration: decimas / 10,
-        },
-      });
+      const metaAudio = {
+        urlStream: audioUrl,
+        duration: decimas / 10,
+      };
+      handleMessage(metaAudio);
       console.log("se envio el audio");
     });
   };
@@ -107,8 +95,8 @@ export const AudioContextProvider = ({ children }) => {
 
     setRecordingTime(`${currentMin}:${currentSec}`);
 
-    if (segundos === 120.5) {
-      stopRecording(activeChannel);
+    if (segundos >= 120.3) {
+      stopRecording();
     }
   };
 

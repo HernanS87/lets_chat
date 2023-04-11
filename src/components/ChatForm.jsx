@@ -1,10 +1,6 @@
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { useEffect, useState, useRef } from "react";
-import { db } from "../firebase/firebase";
-import { useAuthContext } from "../context/AuthContext";
 import { useChatContext } from "../context/ChatContext";
 import { useAudioContext } from "../context/AudioContext";
-import { toast } from "react-toastify";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { MdCancel } from "react-icons/md";
@@ -18,80 +14,22 @@ import AudioRecorder from "./AudioRecorder";
 const ChatForm = () => {
   const [showPicker, setShowPicker] = useState(false);
   const [textAreaScroll, setTextAreaScroll] = useState(false);
-  const [cancelEdit, setCancelEdit] = useState(false);
-  const { user } = useAuthContext();
   const txtAreaRef = useRef();
   const {
     activeChannel,
     msgToEdit,
     setMsgToEdit,
-
-    uploadFile,
     fileURL,
     setFileURL,
     inputMessage,
     setInputMessage,
+    handleMessage,
+    handleFileChange,
+    cancelEdit,
+    setCancelEdit,
   } = useChatContext();
 
-  const { activateMicro, startRecording, newAudio } = useAudioContext();
-
-  const handleMessage = async () => {
-    console.log('handleMessage')
-    const msgValue = inputMessage.trim();
-    setInputMessage("");
-    setCancelEdit(false);
-    if (msgValue || fileURL || newAudio) {
-      if (msgToEdit) {
-        const msgRef = doc(
-          db,
-          `canales/${activeChannel}/mensajes/${msgToEdit.id}`
-        );
-        const imgURL = fileURL;
-        setFileURL("");
-        await updateDoc(msgRef, {
-          ...msgToEdit,
-          message: JSON.stringify(msgValue),
-          file: imgURL,
-          edited: true,
-        });
-        setMsgToEdit("");
-      } else {
-        const msgRef = collection(db, `canales/${activeChannel}/mensajes`);
-        const imgURL = fileURL;
-        setFileURL("");
-        await addDoc(msgRef, {
-          username: user.displayName,
-          uid: user.uid,
-          avatar: user.photoURL,
-          message: JSON.stringify(msgValue),
-          file: imgURL,
-          timestamp: Date.now(),
-          audio: newAudio,
-        });
-      }
-    }
-  };
-
-  const handleFileChange = async (e) => {
-    setFileURL("");
-    if (!e.target.files[0].type.includes("image")) {
-      e.target.value = null;
-      return toast.error("Solo puedes subir imagenes!", {
-        position: "top-center",
-        autoClose: 2500,
-      });
-    }
-    try {
-      const result = await uploadFile(e.target.files[0]);
-      setFileURL(result);
-      e.target.value = null;
-    } catch (error) {
-      toast.error("Ha ocurrido un error, intentalo mas tarde", {
-        position: "top-center",
-        autoClose: 2500,
-      });
-    }
-  };
+  const { activateMicro, startRecording } = useAudioContext();
 
   const addEmoji = (code) => {
     const emoji = String.fromCodePoint(`0x${code.unified}`);
@@ -145,7 +83,9 @@ const ChatForm = () => {
       )}
       <form
         id="form"
-        onSubmit={(e) => {e.preventDefault()}}
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
         className={`flex items-center w-screen px-4 pb-4 transition duration-500 ${
           activateMicro && "opacity-0 -translate-x-full"
         }`}
@@ -184,7 +124,7 @@ const ChatForm = () => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 e.target.style.height = "32px";
-                handleMessage(e);
+                handleMessage();
               }
             }}
           />
@@ -214,7 +154,7 @@ const ChatForm = () => {
             if (!activateMicro && !inputMessage && !fileURL) {
               startRecording();
             } else {
-              handleMessage()
+              handleMessage();
             }
           }}
         >
@@ -233,7 +173,7 @@ const ChatForm = () => {
 
       {/* AUDIORECORDER */}
 
-      <AudioRecorder {...newAudio} activeChannel={activeChannel} />
+      <AudioRecorder />
     </>
   );
 };

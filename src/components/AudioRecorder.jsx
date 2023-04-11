@@ -5,7 +5,7 @@ import { RiSendPlaneFill } from "react-icons/ri";
 import { HiMicrophone } from "react-icons/hi";
 import { useEffect, useState } from "react";
 
-export default function AudioRecorder({ activeChannel }) {
+export default function AudioRecorder() {
   const {
     activateMicro,
     isRecording,
@@ -75,7 +75,7 @@ export default function AudioRecorder({ activeChannel }) {
       <button
         className={`bg-cyan-500 rounded-lg px-2 py-1 `}
         onClick={() => {
-          stopRecording(activeChannel);
+          stopRecording();
         }}
       >
         <RiSendPlaneFill size={30} color={"#fff"} />

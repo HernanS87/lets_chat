@@ -1,8 +1,10 @@
 import { createContext, useContext, useState } from "react";
-import { storage } from "../firebase/firebase";
+import { db, storage } from "../firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "./AuthContext";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 
 const ChatContext = createContext();
 
@@ -14,6 +16,9 @@ export const ChatContextProvider = ({ children }) => {
   const [popupUser, setPopupUser] = useState(false);
   const navigate = useNavigate();
 
+  const [cancelEdit, setCancelEdit] = useState(false);
+  const { user } = useAuthContext();
+
   const changeActiveChannel = (channel) => {
     setActiveChannel(channel);
     navigate("/");
@@ -23,6 +28,63 @@ export const ChatContextProvider = ({ children }) => {
     const storageRef = ref(storage, `imagenes/${v4()}`);
     await uploadBytes(storageRef, file);
     return getDownloadURL(storageRef);
+  };
+
+  const handleMessage = async (newAudio = null) => {
+    const msgValue = inputMessage.trim();
+    setInputMessage("");
+    setCancelEdit(false);
+    if (msgValue || fileURL || newAudio) {
+      if (msgToEdit) {
+        const msgRef = doc(
+          db,
+          `canales/${activeChannel}/mensajes/${msgToEdit.id}`
+        );
+        const imgURL = fileURL;
+        setFileURL("");
+        await updateDoc(msgRef, {
+          ...msgToEdit,
+          message: JSON.stringify(msgValue),
+          file: imgURL,
+          edited: true,
+        });
+        setMsgToEdit("");
+      } else {
+        const msgRef = collection(db, `canales/${activeChannel}/mensajes`);
+        const imgURL = fileURL;
+        setFileURL("");
+        await addDoc(msgRef, {
+          username: user.displayName,
+          uid: user.uid,
+          avatar: user.photoURL,
+          message: JSON.stringify(msgValue),
+          file: imgURL,
+          timestamp: Date.now(),
+          audio: newAudio,
+        });
+      }
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    setFileURL("");
+    if (!e.target.files[0].type.includes("image")) {
+      e.target.value = null;
+      return toast.error("Solo puedes subir imagenes!", {
+        position: "top-center",
+        autoClose: 2500,
+      });
+    }
+    try {
+      const result = await uploadFile(e.target.files[0]);
+      setFileURL(result);
+      e.target.value = null;
+    } catch (error) {
+      toast.error("Ha ocurrido un error, intentalo mas tarde", {
+        position: "top-center",
+        autoClose: 2500,
+      });
+    }
   };
 
   return (
@@ -39,6 +101,10 @@ export const ChatContextProvider = ({ children }) => {
         setInputMessage,
         popupUser,
         setPopupUser,
+        handleMessage,
+        handleFileChange,
+        cancelEdit,
+        setCancelEdit,
       }}
     >
       {children}
