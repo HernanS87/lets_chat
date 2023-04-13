@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useRef, useState } from "react";
 import { db, storage } from "../firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
@@ -10,13 +10,13 @@ const ChatContext = createContext();
 
 export const ChatContextProvider = ({ children }) => {
   const [activeChannel, setActiveChannel] = useState("");
-  const [inputMessage, setInputMessage] = useState("");
+  const [textAreaValue, setTextAreaValue] = useState("");
   const [msgToEdit, setMsgToEdit] = useState("");
   const [fileURL, setFileURL] = useState("");
   const [popupUser, setPopupUser] = useState(false);
   const navigate = useNavigate();
 
-  const [checkSize, setCheckSize] = useState("");
+  const txtAreaRef = useRef();
 
   const [cancelEdit, setCancelEdit] = useState(false);
   const { user } = useAuthContext();
@@ -33,9 +33,10 @@ export const ChatContextProvider = ({ children }) => {
   };
 
   const handleMessage = async (newAudio = null) => {
-    const msgValue = inputMessage.trim();
-    setInputMessage("");
-    setCheckSize("");
+    console.log("handlemMessage", txtAreaRef.current.value);
+    const msgValue = txtAreaRef.current.value.trim();
+    txtAreaRef.current.value = "";
+    setTextAreaValue(false);
     setCancelEdit(false);
     if (msgValue || fileURL || newAudio) {
       if (msgToEdit) {
@@ -100,16 +101,15 @@ export const ChatContextProvider = ({ children }) => {
         uploadFile,
         fileURL,
         setFileURL,
-        inputMessage,
-        setInputMessage,
+        textAreaValue,
+        setTextAreaValue,
         popupUser,
         setPopupUser,
         handleMessage,
         handleFileChange,
         cancelEdit,
         setCancelEdit,
-        checkSize,
-        setCheckSize,
+        txtAreaRef,
       }}
     >
       {children}

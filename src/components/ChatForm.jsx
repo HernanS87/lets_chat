@@ -14,32 +14,30 @@ import AudioRecorder from "./AudioRecorder";
 const ChatForm = () => {
   const [showPicker, setShowPicker] = useState(false);
   const [textAreaScroll, setTextAreaScroll] = useState(false);
-  const txtAreaRef = useRef();
   const {
     activeChannel,
     msgToEdit,
     setMsgToEdit,
     fileURL,
     setFileURL,
-    inputMessage,
-    setInputMessage,
+    textAreaValue,
+    setTextAreaValue,
     handleMessage,
     handleFileChange,
     cancelEdit,
     setCancelEdit,
-    checkSize,
-    setCheckSize,
+    txtAreaRef,
   } = useChatContext();
 
   const { activateMicro, startRecording } = useAudioContext();
 
   const addEmoji = (code) => {
     const emoji = String.fromCodePoint(`0x${code.unified}`);
-    setInputMessage((prevInputMessage) => prevInputMessage + ` ${emoji}`);
+    setTextAreaValue((prevInputMessage) => prevInputMessage + ` ${emoji}`);
   };
 
   const adjustSize = () => {
-    if (txtAreaRef.current.scrollHeight > 40 && inputMessage) {
+    if (txtAreaRef.current.scrollHeight > 40 && txtAreaRef.current.value) {
       txtAreaRef.current.style.height = "auto";
       txtAreaRef.current.style.height = txtAreaRef.current.scrollHeight + "px";
       if (txtAreaRef.current.scrollHeight > 128) {
@@ -47,16 +45,16 @@ const ChatForm = () => {
       } else {
         setTextAreaScroll(false);
       }
-    } else if (inputMessage == "") {
+    } else if (txtAreaRef.current.value == "") {
       txtAreaRef.current.style.height = "32px";
       setTextAreaScroll(false);
     }
   };
 
   const sendEditedMsg = () => {
+    txtAreaRef.current.value = "";
     setMsgToEdit("");
-    setInputMessage("");
-    setCheckSize("");
+    setTextAreaValue(false);
     setFileURL("");
     setCancelEdit(false);
   };
@@ -70,8 +68,8 @@ const ChatForm = () => {
     document.addEventListener("keydown", handleEscape);
 
     if (msgToEdit) {
-      setInputMessage(msgToEdit.message);
-      setCheckSize(msgToEdit.message);
+      txtAreaRef.current.value = msgToEdit.message;
+      setTextAreaValue(true);
       setCancelEdit(true);
     }
     return () => {
@@ -79,10 +77,9 @@ const ChatForm = () => {
     };
   }, [msgToEdit]);
 
-  // Este useEffect ajusta el tamaño del textArea
   useEffect(() => {
     adjustSize();
-  }, [checkSize]);
+  }, [textAreaValue]);
 
   return (
     <>
@@ -118,15 +115,18 @@ const ChatForm = () => {
             placeholder={`Escribe un mensaje en ${activeChannel} 😀`}
             rows={1}
             className={`h-8 max-h-32 resize-none   dark:bg-slate-700 p-1 pl-9 outline-none dark:text-white  dark:placeholder:text-slate-400 bg-slate-300 flex-1 w-full rounded-md placeholder:text-xs md:placeholder:text-sm placeholder:text-slate-800 placeholder:font-medium ${
-              !inputMessage && "py-2 leading-4"
+              !textAreaValue && "py-2 leading-4"
             } ${
               textAreaScroll
                 ? "scrollbar-thin scrollbar-thumb-cyan-500 hover:scrollbar-thumb-cyan-300"
                 : "overflow-y-hidden"
             }`}
-            value={inputMessage}
             onChange={(e) => {
-              setInputMessage(e.target.value);
+              if (e.target.value) {
+                setTextAreaValue(true);
+              } else {
+                setTextAreaValue(false);
+              }
               adjustSize();
             }}
             onKeyDown={(e) => {
@@ -160,7 +160,7 @@ const ChatForm = () => {
           type=""
           className={`bg-cyan-500 rounded-lg px-2 py-1 `}
           onClick={() => {
-            if (!activateMicro && !inputMessage && !fileURL) {
+            if (!activateMicro && !textAreaValue && !fileURL) {
               startRecording();
             } else {
               handleMessage();
@@ -170,12 +170,12 @@ const ChatForm = () => {
           <RiSendPlaneFill
             size={30}
             color={"#fff"}
-            className={`${!inputMessage && !fileURL && "hidden"}`}
+            className={`${!textAreaValue && !fileURL && "hidden"}`}
           />
           <HiMicrophone
             size={30}
             color={"#fff"}
-            className={`${(inputMessage || fileURL) && "hidden"} `}
+            className={`${(textAreaValue || fileURL) && "hidden"} `}
           />
         </button>
       </form>
