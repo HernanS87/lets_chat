@@ -95,6 +95,7 @@ export const ChatContextProvider = ({ children }) => {
     <ChatContext.Provider
       value={{
         activeChannel,
+        setActiveChannel,
         changeActiveChannel,
         msgToEdit,
         setMsgToEdit,
