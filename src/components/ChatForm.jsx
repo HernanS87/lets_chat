@@ -94,7 +94,7 @@ const ChatForm = () => {
         onSubmit={(e) => {
           e.preventDefault();
         }}
-        className={`flex items-center w-full px-4 pb-4 transition duration-500 ${
+        className={`flex items-center w-full px-2 pb-4 transition duration-500 ${
           activateMicro && "opacity-0 -translate-x-full"
         }`}
       >

@@ -7,6 +7,8 @@ import Sidebar from "../components/Sidebar";
 import { HashLoader } from "react-spinners";
 import { Link } from "react-router-dom";
 import { useChatContext } from "../context/ChatContext";
+import sinImagen from "../assets/sinImagen.jpg";
+
 
 const Chat = () => {
   const [allMessages, setAllMessages] = useState([]);
@@ -145,7 +147,7 @@ const Chat = () => {
     <div className="flex">
       <Sidebar />
       {!activeChannel ? (
-        <div className=" w-full h-[calc(100vh-80px)] flex justify-center items-center">
+        <div className=" w-4/6 h-[calc(100vh-80px)] flex justify-center items-center">
           <h2 className="text-lg md:text-xl font-medium space-x-2">
             <span>Selecciona o</span>
             <Link
@@ -158,21 +160,28 @@ const Chat = () => {
           </h2>
         </div>
       ) : (
-        <>
-          <div className="relative w-full top-20 pb-2 h-[calc(100vh-145px)] flex items-start justify-center scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
+          <div className="flex w-4/6 flex-col items-center justify-start ">
+            <div className="w-full flex items-center px-2 gap-3 z-50 h-14 text-xl bg-slate-700">
+            <img
+                  src={sinImagen}
+                  alt="sinPic"
+                  className="w-10 aspect-square rounded-full"
+                />
+                <span>{activeChannel}</span>
+            </div>
             {allMessages.length === 0 ? (
               <div className="absolute top-1/3 ">
                 <HashLoader size={100} color={"#36d7b7"} />
               </div>
             ) : (
-              <div className="w-full">
+              <div className="w-full h-[calc(100vh-120px)] flex flex-col mt-1 pt-1 pb-1 items-center justify-start scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
                 {dates.map((date, index) => {
                   let refHour = 0;
                   const arrayTemp = allMessages.filter(
                     (el) => new Date(el.timestamp).toDateString() === date
                   );
                   return (
-                    <div className="flex flex-col items-center" key={index}>
+                    <div className="w-full flex flex-col items-center bg-slate-800" key={index}>
                       <h3 className="text-center text-gray-400 text-sm font-medium px-2 py-1 rounded bg-slate-900">
                         {whatDayIsIt(date)}
                       </h3>
@@ -207,6 +216,7 @@ const Chat = () => {
                             }
                           }
                           return (
+                            
                             <Message
                               key={message.id}
                               {...message}
@@ -221,12 +231,12 @@ const Chat = () => {
               </div>
             )}
           {activeChannel && (
-            <section className="fixed bottom-0 bg-slate-300">
+            <section className="fixed w-4/6 bottom-0 left-1/3">
               <ChatForm />
             </section>
           )}
           </div>
-        </>
+        
       )}
     </div>
   );

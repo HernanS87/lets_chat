@@ -30,15 +30,12 @@ const Message = ({
   const [showOptions, setShowOptions] = useState(false);
   const [lastChildOptions, setLastChildOptions] = useState(false);
 
-  useEffect(() => {
-    msgRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
-  }, []);
-
+  
   const handleDelete = async () => {
     const docRef = doc(db, `canales/${activeChannel}/mensajes/${id}`);
     await deleteDoc(docRef);
   };
-
+  
   const handleEdit = () => {
     setMsgToEdit({
       username,
@@ -52,10 +49,14 @@ const Message = ({
     });
     setFileURL(file);
   };
-
+  
+  useEffect(() => {
+    msgRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
+  }, []);
+  
   return (
-    <div
-      className="shadow-md flex flex-col pl-4 pr-12 relative hover:bg-slate-850  transition-all ease-in-out"
+    <li
+      className="w-full shadow-md flex flex-col pl-4 pr-12 relative hover:bg-slate-850  transition-all ease-in-out"
       ref={msgRef}
       onMouseOver={() => {
         setShowHour(true);
@@ -114,6 +115,8 @@ const Message = ({
         </a>
       )}
       {audio && <AudioPlayer {...audio} id={id}/>}
+      <div className="">
+
       {message && (
         <p className={`${!sameUser && "pt-3"} break-words `}>
           {message.split("\\n").length > 1
@@ -133,6 +136,7 @@ const Message = ({
           </span>
         </p>
       )}
+      </div>
       <p
         className={`italic text-xs text-slate-400 self-end font-medium absolute bottom-0 right-1  ${
           sameUser && !showHour ? "hidden" : " block"
@@ -140,7 +144,7 @@ const Message = ({
       >
         {new Intl.DateTimeFormat("en-US", options).format(date).toLowerCase()}
       </p>
-    </div>
+    </li>
   );
 };
 

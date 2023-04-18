@@ -29,9 +29,9 @@ const Header = () => {
 						<li>
 							<IoMdChatboxes size={45} color={'#06B6D4'} />
 						</li>
-						<li>
+						{/* <li>
 							<SelectChannel />
-						</li>
+						</li> */}
 						<li className="flex items-center gap-2">
 							{!darkMode ? (
 								<MdLightMode
