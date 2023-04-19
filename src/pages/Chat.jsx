@@ -161,7 +161,7 @@ const Chat = () => {
         </div>
       ) : (
           <div className="flex w-4/6 flex-col items-center justify-start ">
-            <div className="w-full flex items-center px-2 gap-3 z-50 h-14 text-xl bg-slate-700">
+            <div className="w-full flex items-center px-2 gap-3 z-50 h-14 text-xl bg-slate-850">
             <img
                   src={sinImagen}
                   alt="sinPic"

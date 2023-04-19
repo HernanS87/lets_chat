@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { db, storage } from "../firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
@@ -15,6 +15,8 @@ export const ChatContextProvider = ({ children }) => {
   const [fileURL, setFileURL] = useState("");
   const [popupUser, setPopupUser] = useState(false);
   const navigate = useNavigate();
+
+  const [darkMode, setDarkMode] = useState(false);
 
   const txtAreaRef = useRef();
 
@@ -91,6 +93,14 @@ export const ChatContextProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    if (!darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
   return (
     <ChatContext.Provider
       value={{
@@ -111,6 +121,8 @@ export const ChatContextProvider = ({ children }) => {
         cancelEdit,
         setCancelEdit,
         txtAreaRef,
+        darkMode,
+        setDarkMode,
       }}
     >
       {children}
