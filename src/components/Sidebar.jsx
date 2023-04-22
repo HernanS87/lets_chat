@@ -6,11 +6,13 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { IoMdChatboxes, IoMdSettings } from "react-icons/io";
 import { useAuthContext } from "../context/AuthContext";
 import UserPopup from "./UserPopup";
-
+import { AiFillPlusCircle } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
   const [allChannels, setAllChannels] = useState([]);
   const { setActiveChannel } = useChatContext();
+  const navigate = useNavigate();
 
   const { user } = useAuthContext();
   const { popupUser, setPopupUser } = useChatContext();
@@ -42,6 +44,15 @@ export default function Sidebar() {
       </div>
       <nav className="w-full h-[calc(100vh)]  scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
         <ul className="p-1 gap-2 ">
+          <li
+            className=" rounded px-2 py-2 mb-1 cursor-pointer border-l-4 border-transparent hover:border-cyan-500"
+            onClick={() => navigate("/create-channel")}
+          >
+            <div className=" flex gap-4 items-center justify-between left-1 cursor-pointer ">
+              <span>Nuevo canal</span>
+              <AiFillPlusCircle className="text-2xl text-gray-900 dark:text-slate-300" />
+            </div>
+          </li>
           {allChannels.map((channel) => (
             <li
               key={channel.nombre}
@@ -65,13 +76,11 @@ export default function Sidebar() {
       </nav>
       <div className=" w-full bg-slate-900 py-2">
         <ul className="flex justify-between flex-wrap items-center px-2">
-          
           <li className="flex items-center gap-1">
             <img
               src={user.photoURL}
               alt={user.displayName}
               className="w-12 aspect-square rounded-full"
-              
             />
             <span>{user.displayName}</span>
           </li>
@@ -84,7 +93,7 @@ export default function Sidebar() {
             <IoMdSettings />
           </li>
         </ul>
-          {popupUser && <UserPopup/>}
+        {popupUser && <UserPopup />}
       </div>
     </section>
   );
