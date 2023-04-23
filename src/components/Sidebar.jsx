@@ -7,15 +7,15 @@ import { IoMdChatboxes, IoMdSettings } from "react-icons/io";
 import { useAuthContext } from "../context/AuthContext";
 import UserPopup from "./UserPopup";
 import { AiFillPlusCircle } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import NewChannelForm from "./NewChannelForm";
 
 export default function Sidebar() {
   const [allChannels, setAllChannels] = useState([]);
   const { setActiveChannel } = useChatContext();
-  const navigate = useNavigate();
 
   const { user } = useAuthContext();
-  const { popupUser, setPopupUser } = useChatContext();
+  const { popupUser, setPopupUser, newChannel, setNewChannel } =
+    useChatContext();
 
   const getChannels = () => {
     const channelsRef = collection(db, "canales");
@@ -32,8 +32,11 @@ export default function Sidebar() {
     getChannels();
   }, []);
 
-  return (
-    <section className="flex flex-col z-10 gap-2 font-semibold text-lg items-center h-screen w-1/3 bg-slate-850">
+  return !newChannel ? (
+    <section
+      className="flex flex-col z-10 gap-2 font-semibold text-lg items-center h-screen w-1/3 bg-slate-850"
+      onClick={(e) => e.stopPropagation()}
+    >
       {/* <div className="bg-slate-800 p-1">
         <input type="text" placeholder="buscador" />
       </div> */}
@@ -46,7 +49,7 @@ export default function Sidebar() {
         <ul className="p-1 gap-2 ">
           <li
             className=" rounded px-2 py-2 mb-1 cursor-pointer border-l-4 border-transparent hover:border-cyan-500"
-            onClick={() => navigate("/create-channel")}
+            onClick={() => setNewChannel(true)}
           >
             <div className=" flex gap-4 items-center justify-between left-1 cursor-pointer ">
               <span>Nuevo canal</span>
@@ -96,5 +99,7 @@ export default function Sidebar() {
         {popupUser && <UserPopup />}
       </div>
     </section>
+  ) : (
+    <NewChannelForm />
   );
 }

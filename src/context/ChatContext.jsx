@@ -17,6 +17,7 @@ export const ChatContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const [darkMode, setDarkMode] = useState(false);
+  const [newChannel, setNewChannel] = useState(false);
 
   const txtAreaRef = useRef();
 
@@ -123,6 +124,8 @@ export const ChatContextProvider = ({ children }) => {
         txtAreaRef,
         darkMode,
         setDarkMode,
+        newChannel,
+        setNewChannel,
       }}
     >
       {children}
