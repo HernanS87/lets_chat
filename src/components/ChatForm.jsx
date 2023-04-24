@@ -7,9 +7,9 @@ import { MdCancel } from "react-icons/md";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { HiMicrophone } from "react-icons/hi";
 import "react-toastify/dist/ReactToastify.css";
-import EmojiPicker from "emoji-picker-react";
 import ImagePopup from "./ImagePopup";
 import AudioRecorder from "./AudioRecorder";
+import EmojisPicker from "./EmojisPicker";
 
 const ChatForm = () => {
   const [showPicker, setShowPicker] = useState(false);
@@ -31,9 +31,10 @@ const ChatForm = () => {
 
   const { activateMicro, startRecording } = useAudioContext();
 
-  const addEmoji = (code) => {
-    const emoji = String.fromCodePoint(`0x${code.unified}`);
-    setTextAreaValue((prevInputMessage) => prevInputMessage + ` ${emoji}`);
+  const addEmoji = (data) => {
+    txtAreaRef.current.value = txtAreaRef.current.value + data.emoji;
+    setTextAreaValue(true)
+    adjustSize()
   };
 
   const adjustSize = () => {
@@ -59,7 +60,8 @@ const ChatForm = () => {
     setCancelEdit(false);
   };
   const handleEscape = (e) => {
-    if (e.keyCode === 27) {
+    if (e.keyCode === 27 && msgToEdit) {
+      console.log('esc de chatform')
       sendEditedMsg();
     }
   };
@@ -84,11 +86,7 @@ const ChatForm = () => {
   return (
     <>
       {fileURL && <ImagePopup />}
-      {showPicker && (
-        <div className="absolute right-10 bottom-20">
-          <EmojiPicker height={350} width={300} onEmojiClick={addEmoji} />
-        </div>
-      )}
+      {showPicker && <EmojisPicker addEmoji={addEmoji} setShowPicker={setShowPicker} showPicker={showPicker} />}
       <form
         id="form"
         onSubmit={(e) => {
@@ -154,7 +152,9 @@ const ChatForm = () => {
         <MdOutlineEmojiEmotions
           className="cursor-pointer mx-1"
           size={30}
-          onClick={() => setShowPicker(!showPicker)}
+          onClick={(e) => {
+            e.stopPropagation()
+            setShowPicker(!showPicker)}}
         />
         <button
           type=""

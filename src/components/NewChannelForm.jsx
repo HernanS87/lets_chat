@@ -20,11 +20,18 @@ export default function NewChannelForm() {
         setNewChannel(false);
       }
     };
+
+    const handleClick = () => {
+      console.log('newchannel click')
+      setNewChannel(false)
+    }
+
     document.addEventListener("keydown", handleEsc);
-    document.addEventListener("click", () => setNewChannel(false));
+    document.addEventListener("click", handleClick);
 
     return () => {
       document.removeEventListener("keydown", handleEsc);
+      document.removeEventListener("click", handleClick);
     };
   }, []);
   return (
