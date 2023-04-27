@@ -1,7 +1,7 @@
 import EmojiPicker from "emoji-picker-react";
 import { useEffect } from "react";
 
-export default function EmojisPicker({ addEmoji, setShowPicker }) {
+export default function EmojisPicker({ addEmoji, setShowPicker, newChannelForm }) {
   useEffect(() => {
     const closePicker = () => {
       console.log('click')
@@ -26,10 +26,10 @@ export default function EmojisPicker({ addEmoji, setShowPicker }) {
 
   return (
     <div
-      className="absolute right-10 bottom-20 z-10"
+      className={`${!newChannelForm ? "absolute right-10 bottom-20 z-10" : "absolute z-20 bottom-0 left-56 "}`}
       onClick={(e) => e.stopPropagation()}
     >
-      <EmojiPicker height={350} width={300} onEmojiClick={addEmoji} />
+      <EmojiPicker height={350} width={300} onEmojiClick={addEmoji} className='z-50' />
     </div>
   );
 }

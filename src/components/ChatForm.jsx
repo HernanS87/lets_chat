@@ -86,7 +86,7 @@ const ChatForm = () => {
   return (
     <>
       {fileURL && <ImagePopup />}
-      {showPicker && <EmojisPicker addEmoji={addEmoji} setShowPicker={setShowPicker} showPicker={showPicker} />}
+      {showPicker && <EmojisPicker addEmoji={addEmoji} setShowPicker={setShowPicker}  />}
       <form
         id="form"
         onSubmit={(e) => {

@@ -3,14 +3,23 @@ import {
   IoMdCamera,
 } from "react-icons/io";
 import { IoCheckmarkSharp } from "react-icons/io5";
+import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { useChatContext } from "../context/ChatContext";
 import sinImagen from "../assets/sinImagen.jpg";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import EmojisPicker from "./EmojisPicker";
+
 
 
 
 export default function NewChannelForm() {
   const { setNewChannel } = useChatContext();
+  const [showPicker, setShowPicker] = useState(false);
+  const inputRef = useRef()
+
+  const addEmoji = (data) => {
+    inputRef.current.value = inputRef.current.value + data.emoji;
+  };
 
   useEffect(() => {
     
@@ -21,28 +30,30 @@ export default function NewChannelForm() {
       }
     };
 
-    const handleClick = () => {
-      console.log('newchannel click')
-      setNewChannel(false)
-    }
+    // const handleClick = () => {
+    //   console.log('newchannel click')
+    //   if (showPicker)
+    //   setNewChannel(false)
+    // }
 
     document.addEventListener("keydown", handleEsc);
-    document.addEventListener("click", handleClick);
+    // document.addEventListener("click", handleClick);
 
     return () => {
       document.removeEventListener("keydown", handleEsc);
-      document.removeEventListener("click", handleClick);
+      // document.removeEventListener("click", handleClick);
     };
   }, []);
   return (
     <form
-      className="flex flex-col z-10 gap-10 text-lg items-center h-screen w-1/3 bg-slate-850"
+      className="flex flex-col z-20 gap-10 text-lg items-center h-screen w-1/3 bg-slate-850"
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();
+        setShowPicker(false)
       }}
     >
-      <div className="w-full flex items-center px-3 py-2 gap-5 z-50 h-14 ">
+      <div className="w-full flex items-center px-3 py-2 gap-5 h-14 ">
         <IoMdArrowRoundBack
           color={"#06B6D4"}
           className="cursor-pointer text-3xl"
@@ -63,14 +74,24 @@ export default function NewChannelForm() {
           />
         </div>
       </div>
-      <div className="w-52 mt-6">
+      <div className="w-52 mt-6 relative flex items-center border-b border-cyan-500 ">
         <input
           type="text"
           placeholder="Nombre"
           name=""
           id=""
-          className="bg-transparent text-sm w-full py-1 border-b border-cyan-500 outline-none"
+          ref={inputRef}
+          maxLength={24}
+          className="bg-transparent text-sm w-full py-1 outline-none"
         />
+        <MdOutlineEmojiEmotions
+          className="cursor-pointer mx-1"
+          size={30}
+          onClick={(e) => {
+            e.stopPropagation()
+            setShowPicker(!showPicker)}}
+        />
+        {showPicker && <EmojisPicker addEmoji={addEmoji} setShowPicker={setShowPicker} newChannelForm={true} />}
       </div>
       <div>
         <IoCheckmarkSharp className="mt-10 text-2xl w-10 h-10 p-1 rounded-full bg-cyan-500 hover:opacity-90 cursor-pointer">
