@@ -1,5 +1,5 @@
 <h1 align='center'>Let's Chat</h1>
-<p align='center'>Aplicacion de mensajeria instantanea realizada en conjunto con Hernan Santarelli</p>
+<p align='center'>Aplicación de mensajería instantánea realizada en conjunto con Julian Riedinger</p>
 
 ![captura del proyecto](/public/captura.png)
 
