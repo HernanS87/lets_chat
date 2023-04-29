@@ -15,20 +15,25 @@ function UserPopup() {
         setPopupUser(false);
       }
     };
+
+    const handleClick = () => {
+      console.log('channelImagePopup click')
+      setPopupUser(false)
+    }
+
     document.addEventListener("keydown", handleEscape);
+    document.addEventListener("click", handleClick);
     return () => {
       document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("click", handleClick);
     };
   }, []);
 
   return (
     <>
       <div
-        className="modal-container w-full h-full fixed top-0 left-0 z-10 "
-        onClick={() => setPopupUser(false)}
-      ></div>
-      <div
         className={`bg-slate-900 text-sm font-medium text-gray-400 z-50 p-2 flex flex-col absolute rounded bottom-16 left-1/4 `}
+        onClick={(e) => e.stopPropagation()}
       >
         <div
           className="flex justify-between w-40 py-1 px-1 rounded cursor-pointer hover:bg-cyan-500 hover:text-white transition-all ease-in-out mb-1 "

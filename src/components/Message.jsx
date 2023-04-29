@@ -97,6 +97,7 @@ const Message = ({
                 !sameUser ? "top-4 right-1" : "top-1 right-1"
               } ${sameUser && !showHour ? "hidden" : " block"}`}
               onClick={(e) => {
+                e.stopPropagation()
                 console.log(e.pageY);
                 if (e.pageY > 620) {
                   setLastChildOptions(true);

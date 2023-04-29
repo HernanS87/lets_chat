@@ -35,7 +35,10 @@ export default function Sidebar() {
   return !newChannel ? (
     <section
       className="flex flex-col z-10 gap-2 font-semibold text-lg items-center h-screen w-1/3 bg-slate-850"
-      onClick={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation()
+        setPopupUser(false)
+      }}
     >
       {/* <div className="bg-slate-800 p-1">
         <input type="text" placeholder="buscador" />
@@ -89,7 +92,8 @@ export default function Sidebar() {
           </li>
           <li
             className="flex items-center text-2xl cursor-pointer"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation()
               setPopupUser(!popupUser);
             }}
           >
