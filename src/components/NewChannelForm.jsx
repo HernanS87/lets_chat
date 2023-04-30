@@ -8,6 +8,7 @@ import { useChatContext } from "../context/ChatContext";
 import sinImagen from "../assets/sinImagen.jpg";
 import { useEffect, useRef, useState } from "react";
 import EmojisPicker from "./EmojisPicker";
+import ChannelImagePopup from "./ChannelImagePopup";
 
 
 
@@ -15,6 +16,7 @@ import EmojisPicker from "./EmojisPicker";
 export default function NewChannelForm() {
   const { setNewChannel } = useChatContext();
   const [showPicker, setShowPicker] = useState(false);
+  const [channelPopup, setChannelPopup] = useState(false)
   const inputRef = useRef()
 
   const addEmoji = (data) => {
@@ -61,7 +63,7 @@ export default function NewChannelForm() {
         />
         <span className="text-xl">Nuevo Canal</span>
       </div>
-      <div className="cursor-pointer">
+      <div className="cursor-pointer" onClick={() => setChannelPopup(true)}>
         <div className="relative flex items-center justify-center">
           <div className="absolute flex flex-col items-center gap-0 justify-center">
             <IoMdCamera className="text-2xl" />
@@ -73,7 +75,9 @@ export default function NewChannelForm() {
             className="w-40 aspect-square rounded-full opacity-30"
           />
         </div>
+
       </div>
+      {channelPopup && <ChannelImagePopup setChannelPopup={setChannelPopup} />}
       <div className="w-52 mt-6 relative flex items-center border-b border-cyan-500 ">
         <input
           type="text"
@@ -94,9 +98,7 @@ export default function NewChannelForm() {
         {showPicker && <EmojisPicker addEmoji={addEmoji} setShowPicker={setShowPicker} newChannelForm={true} />}
       </div>
       <div>
-        <IoCheckmarkSharp className="mt-10 text-2xl w-10 h-10 p-1 rounded-full bg-cyan-500 hover:opacity-90 cursor-pointer">
-          Crear
-        </IoCheckmarkSharp>
+        <IoCheckmarkSharp className="mt-10 text-2xl w-10 h-10 p-2 rounded-full bg-cyan-500 hover:opacity-90 cursor-pointer" />
       </div>
     </form>
   );
