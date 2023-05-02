@@ -19,6 +19,9 @@ export const ChatContextProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(false);
   const [newChannel, setNewChannel] = useState(false);
 
+  const [channelImage, setChannelImage] = useState(null);
+  const [tempChannelImage, setTempChannelImage] = useState(null);
+
   const txtAreaRef = useRef();
 
   const [cancelEdit, setCancelEdit] = useState(false);
@@ -126,6 +129,10 @@ export const ChatContextProvider = ({ children }) => {
         setDarkMode,
         newChannel,
         setNewChannel,
+        channelImage,
+        setChannelImage,
+        tempChannelImage,
+        setTempChannelImage,
       }}
     >
       {children}

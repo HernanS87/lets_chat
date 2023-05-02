@@ -2,9 +2,12 @@ import { IoCheckmarkSharp } from "react-icons/io5";
 import { MdOutlineClose } from "react-icons/md";
 import sinImagen from "../assets/sinImagen.jpg";
 import { IoMdReturnLeft } from "react-icons/io";
+import { useChatContext } from "../context/ChatContext";
+
 
 
 export default function ChannelImagePopup({ setChannelPopup }) {
+  const {tempChannelImage, setChannelImage} = useChatContext()
   return (
     <div
       className="modal-conatiner w-full h-full fixed top-0 left-0 z-30 flex items-center justify-center bg-opacity-40 bg-black
@@ -26,11 +29,11 @@ export default function ChannelImagePopup({ setChannelPopup }) {
         </div>
         <div className="relative flex items-center justify-center">
           <img
-            src={sinImagen}
+            src={tempChannelImage}
             alt=""
-            className="w-64 aspect-square rounded-full opacity-30"
+            className={`w-64 aspect-square object-cover rounded-full ${!tempChannelImage && "opacity-30"}`}
           />
-          <IoCheckmarkSharp className="mt-10 absolute right-4 -bottom-10 text-2xl w-14 h-14 p-2 rounded-full bg-cyan-500 hover:opacity-90 cursor-pointer" />
+          <IoCheckmarkSharp className="mt-10 absolute right-4 -bottom-10 text-2xl w-14 h-14 p-2 rounded-full bg-cyan-500 hover:opacity-90 cursor-pointer" onClick={() => setChannelImage(tempChannelImage)}/>
         </div>
       </div>
     </div>
