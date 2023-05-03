@@ -18,6 +18,8 @@ export default function NewChannelForm() {
   } = useChatContext();
   const [showPicker, setShowPicker] = useState(false);
   const [channelPopup, setChannelPopup] = useState(false);
+  const [loadingImage, setLoadingImage] = useState(false);
+  const [wannaChangeImage, setWannaChangeImage] = useState(false);
   const inputRef = useRef();
 
   const addEmoji = (data) => {
@@ -25,7 +27,8 @@ export default function NewChannelForm() {
   };
 
   const handleChange = async (e) => {
-    setTempChannelImage(null);
+    setChannelPopup(true);
+    setLoadingImage(true);
     if (!e.target.files[0].type.includes("image")) {
       e.target.value = null;
       console.log("Solo puedes subir imagenes!");
@@ -37,7 +40,6 @@ export default function NewChannelForm() {
     try {
       const result = await uploadFile(e.target.files[0]);
       setTempChannelImage(result);
-      setChannelPopup(true);
       e.target.value = null;
     } catch (error) {
       console.log("Ha ocurrido un error, intentalo mas tarde");
@@ -45,6 +47,8 @@ export default function NewChannelForm() {
       //   position: "top-center",
       //   autoClose: 2500,
       // });
+    } finally {
+      setLoadingImage(false);
     }
   };
 
@@ -53,6 +57,7 @@ export default function NewChannelForm() {
       console.log("escape");
       if (e.keyCode === 27) {
         setNewChannel(false);
+        setChannelImage(null)
       }
     };
 
@@ -83,16 +88,29 @@ export default function NewChannelForm() {
         <IoMdArrowRoundBack
           color={"#06B6D4"}
           className="cursor-pointer text-3xl"
-          onClick={() => setNewChannel(false)}
+          onClick={() => {
+            setChannelImage(null)
+            setNewChannel(false)}}
         />
         <span className="text-xl">Nuevo Canal</span>
       </div>
-      <label htmlFor="newImage" className="cursor-pointer rounded-full">
+      <label
+        htmlFor="newImage"
+        className="cursor-pointer rounded-full"
+        onMouseOver={() => setWannaChangeImage(true)}
+        onMouseLeave={() => setWannaChangeImage(false)}
+      >
         <div className="relative flex items-center justify-center rounded-full ">
           {!channelImage && (
             <div className="absolute flex flex-col items-center gap-0 justify-center">
               <IoMdCamera className="text-2xl" />
               <span className="text-sm">AÑADIR IMAGEN</span>
+            </div>
+          )}
+          {(wannaChangeImage && channelImage) && (
+            <div className="absolute flex flex-col items-center gap-0 justify-center bg-black bg-opacity-60 w-full h-full rounded-full">
+              <IoMdCamera className="text-2xl" />
+              <span className="text-sm">CAMBIAR IMAGEN</span>
             </div>
           )}
           <img
@@ -112,7 +130,13 @@ export default function NewChannelForm() {
           />
         </div>
       </label>
-      {channelPopup && <ChannelImagePopup setChannelPopup={setChannelPopup} />}
+      {channelPopup && (
+        <ChannelImagePopup
+          setChannelPopup={setChannelPopup}
+          handleChange={handleChange}
+          loadingImage={loadingImage}
+        />
+      )}
       <div className="w-52 mt-6 relative flex items-center border-b border-cyan-500 ">
         <input
           type="text"
