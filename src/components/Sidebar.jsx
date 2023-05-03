@@ -8,9 +8,10 @@ import { useAuthContext } from "../context/AuthContext";
 import UserPopup from "./UserPopup";
 import { AiFillPlusCircle } from "react-icons/ai";
 import NewChannelForm from "./NewChannelForm";
+import { HashLoader } from "react-spinners";
 
 export default function Sidebar() {
-  const [allChannels, setAllChannels] = useState([]);
+  const [allChannels, setAllChannels] = useState(null);
   const { setActiveChannel } = useChatContext();
 
   const { user } = useAuthContext();
@@ -36,8 +37,8 @@ export default function Sidebar() {
     <section
       className="flex flex-col z-10 gap-2 font-semibold text-lg items-center h-screen w-1/3 bg-slate-850"
       onClick={(e) => {
-        e.stopPropagation()
-        setPopupUser(false)
+        e.stopPropagation();
+        setPopupUser(false);
       }}
     >
       {/* <div className="bg-slate-800 p-1">
@@ -49,9 +50,9 @@ export default function Sidebar() {
         <span>Let's Chat</span>
       </div>
       <nav className="w-full h-[calc(100vh)]  scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
-        <ul className="p-1 gap-2 ">
+        <ul className="h-full p-1 gap-0 flex flex-col ">
           <li
-            className=" rounded px-2 py-2 mb-1 cursor-pointer border-l-4 border-transparent hover:border-cyan-500"
+            className="relative rounded px-2 py-2 mb-1 cursor-pointer border-l-4 border-transparent hover:border-cyan-500"
             onClick={() => setNewChannel(true)}
           >
             <div className=" flex gap-4 items-center justify-between left-1 cursor-pointer ">
@@ -59,25 +60,33 @@ export default function Sidebar() {
               <AiFillPlusCircle className="text-2xl text-gray-900 dark:text-slate-300" />
             </div>
           </li>
-          {allChannels.map((channel) => (
-            <li
-              key={channel.nombre}
-              className=" rounded  px-2 py-2 mb-1 cursor-pointer hover:bg-slate-900"
-              onClick={() => {
-                console.log(channel.nombre);
-                setActiveChannel(channel.nombre);
-              }}
-            >
-              <div className="flex gap-4 items-center">
-                <img
-                  src={sinImagen}
-                  alt="sinPic"
-                  className="w-10 aspect-square rounded-full"
-                />
-                <span>{channel.nombre}</span>
-              </div>{" "}
+          {allChannels ? (
+            allChannels.map((channel) => (
+              <li
+                key={channel.nombre}
+                className=" rounded  px-2 py-2 mb-1 cursor-pointer hover:bg-slate-900"
+                onClick={() => {
+                  console.log(channel.nombre);
+                  setActiveChannel(channel.nombre);
+                }}
+              >
+                <div className="flex gap-4 items-center">
+                  <img
+                    src={sinImagen}
+                    alt="sinPic"
+                    className="w-10 aspect-square rounded-full"
+                  />
+                  <span>{channel.nombre}</span>
+                </div>{" "}
+              </li>
+            ))
+          ) : (
+            <li className="h-[calc(100%-160px)]  flex items-center justify-center ">
+              <div className=" flex items-center justify-center ">
+                <HashLoader size={50} color={"#36d7b7"} />
+              </div>
             </li>
-          ))}
+          )}
         </ul>
       </nav>
       <div className=" w-full bg-slate-900 py-2">
@@ -93,7 +102,7 @@ export default function Sidebar() {
           <li
             className="flex items-center text-2xl cursor-pointer"
             onClick={(e) => {
-              e.stopPropagation()
+              e.stopPropagation();
               setPopupUser(!popupUser);
             }}
           >
