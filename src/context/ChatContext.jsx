@@ -5,6 +5,7 @@ import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "./AuthContext";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 const ChatContext = createContext();
 
@@ -21,6 +22,7 @@ export const ChatContextProvider = ({ children }) => {
 
   const [channelImage, setChannelImage] = useState(null);
   const [tempChannelImage, setTempChannelImage] = useState(null);
+  const [channelNameForm, setChannelNameForm] = useState("");
 
   const txtAreaRef = useRef();
 
@@ -97,6 +99,26 @@ export const ChatContextProvider = ({ children }) => {
     }
   };
 
+  const handleChannelForm = async () => {
+    if (channelNameForm) {
+      const channelRef = collection(db, `canales`);
+      await addDoc(channelRef, {
+        name: channelNameForm,
+        image: channelImage,
+        creator: user.displayName,
+        creator_id: user.uid,
+        timestamp: Date.now(),
+      });
+      toast.success(`Canal ${channelNameForm} creado correctamente!`, {
+        position: "top-center",
+        autoClose: 1500,
+      });
+      setNewChannel(false);
+      setChannelNameForm("");
+      setChannelImage(null);
+    }
+  };
+
   useEffect(() => {
     if (!darkMode) {
       document.documentElement.classList.add("dark");
@@ -133,6 +155,9 @@ export const ChatContextProvider = ({ children }) => {
         setChannelImage,
         tempChannelImage,
         setTempChannelImage,
+        channelNameForm,
+        setChannelNameForm,
+        handleChannelForm,
       }}
     >
       {children}

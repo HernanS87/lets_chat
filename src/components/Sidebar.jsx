@@ -61,9 +61,9 @@ export default function Sidebar() {
             </div>
           </li>
           {allChannels ? (
-            allChannels.map((channel) => (
+            allChannels.map((channel, index) => (
               <li
-                key={channel.nombre}
+                key={index}
                 className=" rounded  px-2 py-2 mb-1 cursor-pointer hover:bg-slate-900"
                 onClick={() => {
                   console.log(channel.nombre);

@@ -18,7 +18,7 @@ export default function ChannelImagePopup({
     "
       onClick={() => {
         setChannelPopup(false);
-        setTempChannelImage(false);
+        setTempChannelImage(null);
       }}
     >
       <div
@@ -30,7 +30,7 @@ export default function ChannelImagePopup({
             className="cursor-pointer"
             onClick={() => {
               setChannelPopup(false);
-              setTempChannelImage(false);
+              setTempChannelImage(null);
             }}
           >
             <MdOutlineClose className="text-2xl" />
@@ -64,7 +64,7 @@ export default function ChannelImagePopup({
             onClick={() => {
               setChannelImage(tempChannelImage);
               setChannelPopup(false);
-              setTempChannelImage(false);
+              setTempChannelImage(null);
             }}
           />
         </div>

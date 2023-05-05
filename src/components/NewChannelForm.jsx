@@ -13,17 +13,18 @@ export default function NewChannelForm() {
     uploadFile,
     channelImage,
     setChannelImage,
-    tempChannelImage,
     setTempChannelImage,
+    channelNameForm,
+    setChannelNameForm,
+    handleChannelForm,
   } = useChatContext();
   const [showPicker, setShowPicker] = useState(false);
   const [channelPopup, setChannelPopup] = useState(false);
   const [loadingImage, setLoadingImage] = useState(false);
   const [wannaChangeImage, setWannaChangeImage] = useState(false);
-  const inputRef = useRef();
 
   const addEmoji = (data) => {
-    inputRef.current.value = inputRef.current.value + data.emoji;
+    setChannelNameForm(channelNameForm + data.emoji);
   };
 
   const handleChange = async (e) => {
@@ -57,7 +58,8 @@ export default function NewChannelForm() {
       console.log("escape");
       if (e.keyCode === 27) {
         setNewChannel(false);
-        setChannelImage(null)
+        setChannelImage(null);
+        setChannelNameForm("");
       }
     };
 
@@ -89,8 +91,10 @@ export default function NewChannelForm() {
           color={"#06B6D4"}
           className="cursor-pointer text-3xl"
           onClick={() => {
-            setChannelImage(null)
-            setNewChannel(false)}}
+            setChannelImage(null);
+            setNewChannel(false);
+            setChannelNameForm("");
+          }}
         />
         <span className="text-xl">Nuevo Canal</span>
       </div>
@@ -107,7 +111,7 @@ export default function NewChannelForm() {
               <span className="text-sm">AÑADIR IMAGEN</span>
             </div>
           )}
-          {(wannaChangeImage && channelImage) && (
+          {wannaChangeImage && channelImage && (
             <div className="absolute flex flex-col items-center gap-0 justify-center bg-black bg-opacity-60 w-full h-full rounded-full">
               <IoMdCamera className="text-2xl" />
               <span className="text-sm">CAMBIAR IMAGEN</span>
@@ -141,11 +145,10 @@ export default function NewChannelForm() {
         <input
           type="text"
           placeholder="Nombre"
-          name=""
-          id=""
-          ref={inputRef}
+          value={channelNameForm}
           maxLength={24}
           className="bg-transparent text-sm w-full py-1 outline-none"
+          onChange={(e) => setChannelNameForm(e.target.value)}
         />
         <MdOutlineEmojiEmotions
           className="cursor-pointer mx-1"
@@ -163,7 +166,7 @@ export default function NewChannelForm() {
           />
         )}
       </div>
-      <div>
+      <div onClick={handleChannelForm}>
         <IoCheckmarkSharp className="mt-10 text-2xl w-10 h-10 p-2 rounded-full bg-cyan-500 hover:opacity-90 cursor-pointer" />
       </div>
     </form>
