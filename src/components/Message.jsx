@@ -32,7 +32,7 @@ const Message = ({
 
   
   const handleDelete = async () => {
-    const docRef = doc(db, `canales/${activeChannel}/mensajes/${id}`);
+    const docRef = doc(db, `canales/${activeChannel.id}/mensajes/${id}`);
     await deleteDoc(docRef);
   };
   

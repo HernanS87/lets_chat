@@ -110,7 +110,7 @@ const ChatForm = () => {
           <textarea
             type="text"
             ref={txtAreaRef}
-            placeholder={`Escribe un mensaje en ${activeChannel} 😀`}
+            placeholder={`Escribe un mensaje en ${activeChannel.name}`}
             rows={1}
             className={`h-8 max-h-32 resize-none   dark:bg-slate-700 p-1 pl-9 outline-none dark:text-white  dark:placeholder:text-slate-400 bg-slate-300 flex-1 w-full rounded-md placeholder:text-xs md:placeholder:text-sm placeholder:text-slate-800 placeholder:font-medium ${
               !textAreaValue && "py-2 leading-4"

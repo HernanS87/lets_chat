@@ -24,6 +24,7 @@ export default function Sidebar() {
       setAllChannels(
         snap.docs.map((doc) => ({
           ...doc.data(),
+          id: doc.id,
         }))
       );
     });
@@ -49,34 +50,33 @@ export default function Sidebar() {
 
         <span>Let's Chat</span>
       </div>
-      <nav className="w-full h-[calc(100vh)]  scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
-        <ul className="h-full p-1 gap-0 flex flex-col ">
-          <li
-            className="relative rounded px-2 py-2 mb-1 cursor-pointer border-l-4 border-transparent hover:border-cyan-500"
-            onClick={() => setNewChannel(true)}
-          >
-            <div className=" flex gap-4 items-center justify-between left-1 cursor-pointer ">
-              <span>Nuevo canal</span>
-              <AiFillPlusCircle className="text-2xl text-gray-900 dark:text-slate-300" />
-            </div>
-          </li>
+      <div
+        className="relative w-full rounded px-2 py-2 mb-1 cursor-pointer border-l-4 border-transparent hover:border-cyan-500"
+        onClick={() => setNewChannel(true)}
+      >
+        <div className=" flex gap-4 items-center justify-between left-1 cursor-pointer ">
+          <span>Nuevo canal</span>
+          <AiFillPlusCircle className="text-2xl text-gray-900 dark:text-slate-300" />
+        </div>
+      </div>
+      <nav className="w-full h-full  scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
+        <ul className="h-full px-1 gap-0 flex flex-col ">
           {allChannels ? (
             allChannels.map((channel, index) => (
               <li
                 key={index}
                 className=" rounded  px-2 py-2 mb-1 cursor-pointer hover:bg-slate-900"
                 onClick={() => {
-                  console.log(channel.nombre);
-                  setActiveChannel(channel.nombre);
+                  setActiveChannel({ ...channel });
                 }}
               >
                 <div className="flex gap-4 items-center">
                   <img
-                    src={sinImagen}
+                    src={channel.image ? channel.image : sinImagen}
                     alt="sinPic"
                     className="w-10 aspect-square rounded-full"
                   />
-                  <span>{channel.nombre}</span>
+                  <span>{channel.name}</span>
                 </div>{" "}
               </li>
             ))

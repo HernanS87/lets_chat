@@ -29,11 +29,6 @@ export const ChatContextProvider = ({ children }) => {
   const [cancelEdit, setCancelEdit] = useState(false);
   const { user } = useAuthContext();
 
-  const changeActiveChannel = (channel) => {
-    setActiveChannel(channel);
-    navigate("/");
-  };
-
   const uploadFile = async (file) => {
     const storageRef = ref(storage, `imagenes/${v4()}`);
     await uploadBytes(storageRef, file);
@@ -50,7 +45,7 @@ export const ChatContextProvider = ({ children }) => {
       if (msgToEdit) {
         const msgRef = doc(
           db,
-          `canales/${activeChannel}/mensajes/${msgToEdit.id}`
+          `canales/${activeChannel.id}/mensajes/${msgToEdit.id}`
         );
         const imgURL = fileURL;
         setFileURL("");
@@ -62,7 +57,7 @@ export const ChatContextProvider = ({ children }) => {
         });
         setMsgToEdit("");
       } else {
-        const msgRef = collection(db, `canales/${activeChannel}/mensajes`);
+        const msgRef = collection(db, `canales/${activeChannel.id}/mensajes`);
         const imgURL = fileURL;
         setFileURL("");
         await addDoc(msgRef, {
@@ -132,7 +127,6 @@ export const ChatContextProvider = ({ children }) => {
       value={{
         activeChannel,
         setActiveChannel,
-        changeActiveChannel,
         msgToEdit,
         setMsgToEdit,
         uploadFile,

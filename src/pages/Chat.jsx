@@ -17,7 +17,7 @@ const Chat = () => {
 
   const getMessages = () => {
     if (activeChannel) {
-      const msgRef = collection(db, `canales/${activeChannel}/mensajes`);
+      const msgRef = collection(db, `canales/${activeChannel.id}/mensajes`);
 
       const q = query(msgRef, orderBy("timestamp", "asc"));
 
@@ -163,15 +163,15 @@ const Chat = () => {
           <div className="flex w-4/6 flex-col items-center justify-start ">
             <div className="w-full flex items-center px-2 gap-3 z-10 h-14 text-xl bg-slate-850">
             <img
-                  src={sinImagen}
+                  src={activeChannel.image ? activeChannel.image : sinImagen}
                   alt="sinPic"
                   className="w-10 aspect-square rounded-full"
                 />
-                <span>{activeChannel}</span>
+                <span>{activeChannel.name}</span>
             </div>
             {allMessages.length === 0 ? (
-              <div className="absolute top-1/3 ">
-                <HashLoader size={100} color={"#36d7b7"} />
+              <div className="h-[calc(100%-140px)]  flex items-center">
+                <HashLoader size={80} color={"#36d7b7"}/>
               </div>
             ) : (
               <div className="w-full h-[calc(100vh-120px)] flex flex-col mt-1 pt-1 pb-1 items-center justify-start scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
