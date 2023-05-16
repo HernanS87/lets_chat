@@ -12,7 +12,7 @@ import { HashLoader } from "react-spinners";
 
 export default function Sidebar() {
   const [allChannels, setAllChannels] = useState(null);
-  const { setActiveChannel } = useChatContext();
+  const { setActiveChannel, editActiveChannel } = useChatContext();
 
   const { user } = useAuthContext();
   const { popupUser, setPopupUser, newChannel, setNewChannel } =
@@ -34,7 +34,7 @@ export default function Sidebar() {
     getChannels();
   }, []);
 
-  return !newChannel ? (
+  return !newChannel && !editActiveChannel ? (
     <section
       className="flex flex-col z-10 gap-2 font-semibold text-lg items-center h-screen w-1/3 bg-slate-850"
       onClick={(e) => {
@@ -74,7 +74,7 @@ export default function Sidebar() {
                   <img
                     src={channel.image ? channel.image : sinImagen}
                     alt="sinPic"
-                    className="w-10 aspect-square rounded-full"
+                    className="w-11 aspect-square object-cover rounded-full"
                   />
                   <span>{channel.name}</span>
                 </div>{" "}

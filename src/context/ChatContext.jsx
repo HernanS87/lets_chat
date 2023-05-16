@@ -15,10 +15,10 @@ export const ChatContextProvider = ({ children }) => {
   const [msgToEdit, setMsgToEdit] = useState("");
   const [fileURL, setFileURL] = useState("");
   const [popupUser, setPopupUser] = useState(false);
-  const navigate = useNavigate();
 
   const [darkMode, setDarkMode] = useState(false);
   const [newChannel, setNewChannel] = useState(false);
+  const [editActiveChannel, setEditActiveChannel] = useState(false);
 
   const [channelImage, setChannelImage] = useState(null);
   const [tempChannelImage, setTempChannelImage] = useState(null);
@@ -96,21 +96,47 @@ export const ChatContextProvider = ({ children }) => {
 
   const handleChannelForm = async () => {
     if (channelNameForm) {
-      const channelRef = collection(db, `canales`);
-      await addDoc(channelRef, {
-        name: channelNameForm,
-        image: channelImage,
-        creator: user.displayName,
-        creator_id: user.uid,
-        timestamp: Date.now(),
-      });
-      toast.success(`Canal ${channelNameForm} creado correctamente!`, {
-        position: "top-center",
-        autoClose: 1500,
-      });
-      setNewChannel(false);
-      setChannelNameForm("");
-      setChannelImage(null);
+      if (editActiveChannel) {
+        const channelRef = doc(db, `canales/${activeChannel.id}`);
+        await updateDoc(channelRef, {
+          ...activeChannel,
+          name: channelNameForm,
+          image: channelImage,
+          lastUpdate: {
+            userName: user.displayName,
+            userId: user.uid,
+            timestamp: Date.now(),
+          },
+        });
+        toast.success(`Canal ${channelNameForm} editado correctamente!`, {
+          position: "top-center",
+          autoClose: 1500,
+        });
+        setChannelNameForm("");
+        setChannelImage(null);
+        setEditActiveChannel(false);
+        setActiveChannel({
+          ...activeChannel,
+          name: channelNameForm,
+          image: channelImage,
+        });
+      } else {
+        const channelRef = collection(db, `canales`);
+        await addDoc(channelRef, {
+          name: channelNameForm,
+          image: channelImage,
+          creator: user.displayName,
+          creator_id: user.uid,
+          timestamp: Date.now(),
+        });
+        toast.success(`Canal ${channelNameForm} creado correctamente!`, {
+          position: "top-center",
+          autoClose: 1500,
+        });
+        setNewChannel(false);
+        setChannelNameForm("");
+        setChannelImage(null);
+      }
     }
   };
 
@@ -152,6 +178,8 @@ export const ChatContextProvider = ({ children }) => {
         channelNameForm,
         setChannelNameForm,
         handleChannelForm,
+        editActiveChannel,
+        setEditActiveChannel,
       }}
     >
       {children}

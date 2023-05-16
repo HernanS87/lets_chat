@@ -17,6 +17,7 @@ export default function NewChannelForm() {
     channelNameForm,
     setChannelNameForm,
     handleChannelForm,
+    setEditActiveChannel,
   } = useChatContext();
   const [showPicker, setShowPicker] = useState(false);
   const [channelPopup, setChannelPopup] = useState(false);
@@ -60,6 +61,7 @@ export default function NewChannelForm() {
         setNewChannel(false);
         setChannelImage(null);
         setChannelNameForm("");
+        setEditActiveChannel(false);
       }
     };
 
@@ -94,6 +96,7 @@ export default function NewChannelForm() {
             setChannelImage(null);
             setNewChannel(false);
             setChannelNameForm("");
+            setEditActiveChannel(false);
           }}
         />
         <span className="text-xl">Nuevo Canal</span>

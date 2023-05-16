@@ -9,11 +9,15 @@ import { Link } from "react-router-dom";
 import { useChatContext } from "../context/ChatContext";
 import sinImagen from "../assets/sinImagen.jpg";
 
-
 const Chat = () => {
   const [allMessages, setAllMessages] = useState([]);
   const [dates, setDates] = useState([]);
-  const { activeChannel } = useChatContext();
+  const {
+    activeChannel,
+    setEditActiveChannel,
+    setChannelImage,
+    setChannelNameForm,
+  } = useChatContext();
 
   const getMessages = () => {
     if (activeChannel) {
@@ -160,83 +164,91 @@ const Chat = () => {
           </h2>
         </div>
       ) : (
-          <div className="flex w-4/6 flex-col items-center justify-start ">
-            <div className="w-full flex items-center px-2 gap-3 z-10 h-14 text-xl bg-slate-850">
+        <div className="flex w-4/6 flex-col items-center justify-start ">
+          <div
+            className="w-full flex items-center px-2 gap-3 z-10 h-14 text-xl bg-slate-850 cursor-pointer"
+            onClick={() => {
+              setEditActiveChannel(true);
+              setChannelImage(activeChannel.image);
+              setChannelNameForm(activeChannel.name);
+            }}
+          >
             <img
-                  src={activeChannel.image ? activeChannel.image : sinImagen}
-                  alt="sinPic"
-                  className="w-10 aspect-square rounded-full"
-                />
-                <span>{activeChannel.name}</span>
+              src={activeChannel.image ? activeChannel.image : sinImagen}
+              alt="sinPic"
+              className="w-11 aspect-square object-cover rounded-full"
+            />
+            <span>{activeChannel.name}</span>
+          </div>
+          {allMessages.length === 0 ? (
+            <div className="h-[calc(100%-140px)]  flex items-center">
+              <HashLoader size={80} color={"#36d7b7"} />
             </div>
-            {allMessages.length === 0 ? (
-              <div className="h-[calc(100%-140px)]  flex items-center">
-                <HashLoader size={80} color={"#36d7b7"}/>
-              </div>
-            ) : (
-              <div className="w-full h-[calc(100vh-120px)] flex flex-col mt-1 pt-1 pb-1 items-center justify-start scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
-                {dates.map((date, index) => {
-                  let refHour = 0;
-                  const arrayTemp = allMessages.filter(
-                    (el) => new Date(el.timestamp).toDateString() === date
-                  );
-                  return (
-                    <div className="w-full flex flex-col items-center bg-slate-800" key={index}>
-                      <h3 className="text-center text-gray-400 text-sm font-medium px-2 py-1 rounded bg-slate-900">
-                        {whatDayIsIt(date)}
-                      </h3>
-                      <ul className="px-4 pt-5 w-full">
-                        {arrayTemp.map((message, i) => {
-                          let sameUser = false;
-                          // sameUser es true cuando el mismo usuario escribió mjs continuos durante media hora. Si pasa mas de media hora del último mjs(con foto y nombre) y ningun otro usuario escribió, entonces vuelve a aparecer su foto y nombre
-                          if (i > 0) {
-                            const previousHour = new Date(
-                              arrayTemp[i - 1].timestamp
-                            ).getTime();
-                            const currentHour = new Date(
-                              message.timestamp
-                            ).getTime();
-                            if (i - 1 === 0) {
-                              refHour = previousHour;
-                            }
-                            if (
-                              arrayTemp[i - 1].uid === message.uid &&
-                              (currentHour - previousHour) / 1000 < 1800
-                            ) {
-                              if (
-                                refHour > 0 &&
-                                (currentHour - refHour) / 1000 > 1800
-                              ) {
-                                refHour = currentHour;
-                              } else {
-                                sameUser = true;
-                              }
-                            } else {
-                              refHour = currentHour;
-                            }
+          ) : (
+            <div className="w-full h-[calc(100vh-120px)] flex flex-col mt-1 pt-1 pb-1 items-center justify-start scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
+              {dates.map((date, index) => {
+                let refHour = 0;
+                const arrayTemp = allMessages.filter(
+                  (el) => new Date(el.timestamp).toDateString() === date
+                );
+                return (
+                  <div
+                    className="w-full flex flex-col items-center bg-slate-800"
+                    key={index}
+                  >
+                    <h3 className="text-center text-gray-400 text-sm font-medium px-2 py-1 rounded bg-slate-900">
+                      {whatDayIsIt(date)}
+                    </h3>
+                    <ul className="px-4 pt-5 w-full">
+                      {arrayTemp.map((message, i) => {
+                        let sameUser = false;
+                        // sameUser es true cuando el mismo usuario escribió mjs continuos durante media hora. Si pasa mas de media hora del último mjs(con foto y nombre) y ningun otro usuario escribió, entonces vuelve a aparecer su foto y nombre
+                        if (i > 0) {
+                          const previousHour = new Date(
+                            arrayTemp[i - 1].timestamp
+                          ).getTime();
+                          const currentHour = new Date(
+                            message.timestamp
+                          ).getTime();
+                          if (i - 1 === 0) {
+                            refHour = previousHour;
                           }
-                          return (
-                            
-                            <Message
-                              key={message.id}
-                              {...message}
-                              sameUser={sameUser}
-                            />
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                          if (
+                            arrayTemp[i - 1].uid === message.uid &&
+                            (currentHour - previousHour) / 1000 < 1800
+                          ) {
+                            if (
+                              refHour > 0 &&
+                              (currentHour - refHour) / 1000 > 1800
+                            ) {
+                              refHour = currentHour;
+                            } else {
+                              sameUser = true;
+                            }
+                          } else {
+                            refHour = currentHour;
+                          }
+                        }
+                        return (
+                          <Message
+                            key={message.id}
+                            {...message}
+                            sameUser={sameUser}
+                          />
+                        );
+                      })}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           {activeChannel && (
             <section className="fixed w-4/6 bottom-0 left-1/3">
               <ChatForm />
             </section>
           )}
-          </div>
-        
+        </div>
       )}
     </div>
   );
