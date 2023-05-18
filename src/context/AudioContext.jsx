@@ -50,7 +50,7 @@ export const AudioContextProvider = ({ children }) => {
     setIsRecording(false);
     mediaRecorderRef.current.stop();
     setDecimas(0);
-    console.log(decimas / 10);
+    console.log("nuevo tiempo", decimas / 10 - 0.15);
     stopTimer();
     mediaRecorderRef.current.addEventListener("dataavailable", async (e) => {
       const audioBlob = e.data;
@@ -58,7 +58,7 @@ export const AudioContextProvider = ({ children }) => {
       console.log("url de storage", audioUrl);
       const metaAudio = {
         urlStream: audioUrl,
-        duration: decimas / 10,
+        duration: decimas / 10 - 0.15,
       };
       handleMessage(metaAudio);
       console.log("se envio el audio");

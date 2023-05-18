@@ -54,6 +54,7 @@ export default function AudioPlayer({ urlStream, duration, id }) {
             setProgress(0);
             setProgressPercentage(0);
             setIsPlaying(false);
+            setActivateTimer(false)
           }}
         />
         <div className="absolute text-xs font-semibold text-gray-400 bottom-1 timer left-18">
