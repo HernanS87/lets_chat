@@ -24,6 +24,8 @@ export const ChatContextProvider = ({ children }) => {
   const [tempChannelImage, setTempChannelImage] = useState(null);
   const [channelNameForm, setChannelNameForm] = useState("");
 
+  const [loadingImage, setLoadingImage] = useState(false);
+
   const txtAreaRef = useRef();
 
   const [cancelEdit, setCancelEdit] = useState(false);
@@ -75,6 +77,7 @@ export const ChatContextProvider = ({ children }) => {
 
   const handleFileChange = async (e) => {
     setFileURL("");
+    setLoadingImage(true);
     if (!e.target.files[0].type.includes("image")) {
       e.target.value = null;
       return toast.error("Solo puedes subir imagenes!", {
@@ -85,6 +88,7 @@ export const ChatContextProvider = ({ children }) => {
     try {
       const result = await uploadFile(e.target.files[0]);
       setFileURL(result);
+      setLoadingImage(false);
       e.target.value = null;
     } catch (error) {
       toast.error("Ha ocurrido un error, intentalo mas tarde", {
@@ -180,6 +184,7 @@ export const ChatContextProvider = ({ children }) => {
         handleChannelForm,
         editActiveChannel,
         setEditActiveChannel,
+        loadingImage,
       }}
     >
       {children}

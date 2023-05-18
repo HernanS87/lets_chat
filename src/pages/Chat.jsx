@@ -4,6 +4,8 @@ import { db } from "../firebase/firebase";
 import ChatForm from "../components/ChatForm";
 import Message from "../components/Message";
 import Sidebar from "../components/Sidebar";
+import LoadingChatImage from "../components/LoadingChatImage";
+
 import { HashLoader } from "react-spinners";
 import { Link } from "react-router-dom";
 import { useChatContext } from "../context/ChatContext";
@@ -17,6 +19,7 @@ const Chat = () => {
     setEditActiveChannel,
     setChannelImage,
     setChannelNameForm,
+    loadingImage,
   } = useChatContext();
 
   const getMessages = () => {
@@ -165,6 +168,7 @@ const Chat = () => {
         </div>
       ) : (
         <div className="flex w-4/6 flex-col items-center justify-start ">
+          {loadingImage && <LoadingChatImage />}
           <div
             className="w-full flex items-center px-2 gap-3 z-10 h-14 text-xl bg-slate-850 cursor-pointer"
             onClick={() => {
