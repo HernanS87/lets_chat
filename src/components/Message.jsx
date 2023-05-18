@@ -112,7 +112,7 @@ const Message = ({
       </div>
       {file && (
         <a href={file} target="_blank" className="w-fit">
-          <img src={file} alt={uid} className="max-w-xs lg:max-w-xl pt-3" />
+          <img src={file} alt={uid} className="max-w-xs lg:max-w-xl pt-3 max-h-[300px] object-cover" />
         </a>
       )}
       {audio && <AudioPlayer {...audio} id={id}/>}

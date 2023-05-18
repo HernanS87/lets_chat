@@ -1,25 +1,34 @@
+import { useEffect } from "react";
 import { useChatContext } from "../context/ChatContext";
-import { ImCancelCircle } from "react-icons/im";
+import { MdOutlineClose } from "react-icons/md";
 
 const ImagePopup = () => {
   const { fileURL, setFileURL } = useChatContext();
 
   const handleDelete = () => {
-    setFileURL("");
+    setFileURL(null);
   };
 
+  useEffect(() => {
+    document.addEventListener("keydown", handleDelete);
+
+    return () => {
+      document.removeEventListener("keydown", handleDelete);
+    };
+  }, []);
+
   return (
-    <div className="max-w-sm h-64 rounded-lg mx-auto px-4 relative  bg-slate-400 flex justify-center items-center">
-      <div>
-        <ImCancelCircle
+    <div className="max-w-md max-h-96 h-80 rounded-lg mx-auto px-4 relative  bg-slate-700 flex justify-center items-center p-2">
+      <div className=" flex justify-center items-center ">
+        <MdOutlineClose
           size={30}
-          className="absolute top-2 right-2 text-red-500  cursor-pointer"
+          className="absolute top-2 right-2 text-gray-400  cursor-pointer"
           onClick={handleDelete}
         />
         <img
           src={fileURL}
           alt="imagen subida"
-          className="max-w-[250px] max-h-[180px] mx-auto"
+          className=" object-cover max-h-[300px] max-w-xs"
         />
       </div>
     </div>
