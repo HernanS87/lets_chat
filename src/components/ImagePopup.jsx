@@ -9,11 +9,18 @@ const ImagePopup = () => {
     setFileURL(null);
   };
 
+  const handleEscape = (e) => {
+    if (e.keyCode === 27) {
+      console.log("esc de imagePopup")
+      handleDelete();
+    }
+  };
+
   useEffect(() => {
-    document.addEventListener("keydown", handleDelete);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
-      document.removeEventListener("keydown", handleDelete);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, []);
 
