@@ -31,8 +31,8 @@ export const ChatContextProvider = ({ children }) => {
   const [cancelEdit, setCancelEdit] = useState(false);
   const { user } = useAuthContext();
 
-  const uploadFile = async (file) => {
-    const storageRef = ref(storage, `imagenes/${v4()}`);
+  const uploadFile = async (file, type) => {
+    const storageRef = ref(storage, `${type}/${v4()}`);
     await uploadBytes(storageRef, file);
     return getDownloadURL(storageRef);
   };
@@ -86,7 +86,7 @@ export const ChatContextProvider = ({ children }) => {
       });
     }
     try {
-      const result = await uploadFile(e.target.files[0]);
+      const result = await uploadFile(e.target.files[0], "imagenes");
       setFileURL(result);
       setLoadingImage(false);
       e.target.value = null;

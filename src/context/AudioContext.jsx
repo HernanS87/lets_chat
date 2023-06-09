@@ -1,13 +1,10 @@
 import { createContext, useContext, useState, useRef } from "react";
-import { storage } from "../firebase/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { v4 } from "uuid";
 import { useChatContext } from "./ChatContext";
 
 const AudioContext = createContext();
 
 export const AudioContextProvider = ({ children }) => {
-  const { handleMessage } = useChatContext();
+  const { handleMessage, uploadFile } = useChatContext();
 
   const [activateMicro, setActivateMicro] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -20,11 +17,7 @@ export const AudioContextProvider = ({ children }) => {
 
   const [justOnePlayer, setJustOnePlayer] = useState(null);
 
-  const uploadAudio = async (file) => {
-    const storageRef = ref(storage, `audio/${v4()}`);
-    await uploadBytes(storageRef, file);
-    return getDownloadURL(storageRef);
-  };
+
 
   const startTimer = () => {
     intervalRef.current = setInterval(() => {
@@ -54,7 +47,7 @@ export const AudioContextProvider = ({ children }) => {
     stopTimer();
     mediaRecorderRef.current.addEventListener("dataavailable", async (e) => {
       const audioBlob = e.data;
-      const audioUrl = await uploadAudio(audioBlob);
+      const audioUrl = await uploadFile(audioBlob, "audio");
       console.log("url de storage", audioUrl);
       const metaAudio = {
         urlStream: audioUrl,
