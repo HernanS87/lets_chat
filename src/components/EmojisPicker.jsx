@@ -8,18 +8,18 @@ export default function EmojisPicker({ addEmoji, setShowPicker, newChannelForm }
       setShowPicker(false);
     };
 
-    const handleEsc = (e) => {
-      console.log("escape");
-      if (e.keyCode === 27) {
-        setShowPicker(false);
-      }
-    };
+    // const handleEsc = (e) => {
+    //   console.log("escape");
+    //   if (e.keyCode === 27) {
+    //     setShowPicker(false);
+    //   }
+    // };
 
-    document.addEventListener("keydown", handleEsc);
+    // document.addEventListener("keydown", handleEsc);
     document.addEventListener("click", closePicker);
 
     return () => {
-      document.removeEventListener("keydown", handleEsc);
+      // document.removeEventListener("keydown", handleEsc);
       document.removeEventListener("click", closePicker);
     };
   }, []);

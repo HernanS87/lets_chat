@@ -15,8 +15,14 @@ export default function Sidebar() {
   const { setActiveChannel, editActiveChannel } = useChatContext();
 
   const { user } = useAuthContext();
-  const { popupUser, setPopupUser, newChannel, setNewChannel } =
-    useChatContext();
+  const {
+    popupUser,
+    setPopupUser,
+    newChannel,
+    setNewChannel,
+    listOfComponentsToClose,
+    setListOfComponentsToClose,
+  } = useChatContext();
 
   const getChannels = () => {
     const channelsRef = collection(db, "canales");
@@ -52,7 +58,13 @@ export default function Sidebar() {
       </div>
       <div
         className="relative w-full rounded px-2 py-2 mb-1 cursor-pointer border-l-4 border-transparent hover:border-cyan-500"
-        onClick={() => setNewChannel(true)}
+        onClick={() => {
+          setNewChannel(true);
+          setListOfComponentsToClose([
+            ...listOfComponentsToClose,
+            "NewChannelForm",
+          ]);
+        }}
       >
         <div className=" flex gap-4 items-center justify-between left-1 cursor-pointer ">
           <span>Nuevo canal</span>

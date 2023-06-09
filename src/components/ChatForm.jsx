@@ -28,6 +28,8 @@ const ChatForm = () => {
     txtAreaRef,
     showEmojiPickerChat,
     setShowEmojiPickerChat,
+    listOfComponentsToClose,
+    setListOfComponentsToClose,
   } = useChatContext();
 
   const { activateMicro, startRecording } = useAudioContext();
@@ -161,6 +163,7 @@ const ChatForm = () => {
           onClick={(e) => {
             e.stopPropagation();
             setShowEmojiPickerChat(!showEmojiPickerChat);
+            setListOfComponentsToClose([...listOfComponentsToClose,"EmojisPickerChat"])
           }}
         />
         <button

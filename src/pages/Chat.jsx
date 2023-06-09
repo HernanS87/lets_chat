@@ -20,6 +20,8 @@ const Chat = () => {
     setChannelImage,
     setChannelNameForm,
     loadingImage,
+    listOfComponentsToClose,
+    closeAnyComponentWithEsc,
   } = useChatContext();
 
   const getMessages = () => {
@@ -145,6 +147,14 @@ const Chat = () => {
     }
     return itIs;
   };
+
+  useEffect(() => {
+    document.addEventListener("keydown",closeAnyComponentWithEsc)
+
+    return () => {
+      document.removeEventListener("keydown", closeAnyComponentWithEsc);
+    };
+  }, [listOfComponentsToClose])
 
   useEffect(() => {
     getMessages();

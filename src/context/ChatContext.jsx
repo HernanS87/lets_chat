@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { db, storage } from "../firebase/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, list } from "firebase/storage";
 import { v4 } from "uuid";
 import { useAuthContext } from "./AuthContext";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
@@ -27,17 +27,51 @@ export const ChatContextProvider = ({ children }) => {
 
   const txtAreaRef = useRef();
 
-  const listOfComponentsToClose = [];
+  const [listOfComponentsToClose, setListOfComponentsToClose] = useState([]);
   const [showEmojiPickerChannel, setShowEmojiPickerChannel] = useState(false);
   const [showEmojiPickerChat, setShowEmojiPickerChat] = useState(false);
 
+  const closeEmojisPickerChat = () => {
+    setShowEmojiPickerChat(false);
+  };
+
+  const closeEmojisPickerChannel = () => {
+    setShowEmojiPickerChannel(false);
+  };
+
+  const closeImagePopup = () => {
+    setFileURL(null);
+  };
+
+  const closeNewChannelForm = () => {
+    setNewChannel(false);
+    setChannelImage(null);
+    setChannelNameForm("");
+    setEditActiveChannel(false);
+  };
+
   const closeAnyComponentWithEsc = (e) => {
     if (e.keyCode === 27) {
+      console.log(
+        "lista de componentes antes del pop",
+        listOfComponentsToClose
+      );
       let componentToClose = listOfComponentsToClose.pop();
+      setListOfComponentsToClose(listOfComponentsToClose);
+      console.log("lista de componentes desp del pop", listOfComponentsToClose);
       switch (componentToClose) {
-        case "EmojisPickerFormChat":
+        case "EmojisPickerChat":
+          closeEmojisPickerChat();
           break;
-
+        case "EmojisPickerChannel":
+          closeEmojisPickerChannel();
+          break;
+        case "ImagePopup":
+          closeImagePopup();
+          break;
+        case "NewChannelForm":
+          closeNewChannelForm();
+          break;
         default:
           console.log("No hay ningun componente para cerrar");
           break;
@@ -202,11 +236,13 @@ export const ChatContextProvider = ({ children }) => {
         editActiveChannel,
         setEditActiveChannel,
         loadingImage,
-        listOfComponentsToClose,
         showEmojiPickerChannel,
         setShowEmojiPickerChannel,
         showEmojiPickerChat,
         setShowEmojiPickerChat,
+        listOfComponentsToClose,
+        setListOfComponentsToClose,
+        closeAnyComponentWithEsc,
       }}
     >
       {children}

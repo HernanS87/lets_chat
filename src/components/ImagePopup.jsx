@@ -3,25 +3,30 @@ import { useChatContext } from "../context/ChatContext";
 import { MdOutlineClose } from "react-icons/md";
 
 const ImagePopup = () => {
-  const { fileURL, setFileURL } = useChatContext();
+  const {
+    fileURL,
+    setFileURL,
+    listOfComponentsToClose,
+    setListOfComponentsToClose,
+  } = useChatContext();
 
   const handleDelete = () => {
     setFileURL(null);
   };
 
-  const handleEscape = (e) => {
-    if (e.keyCode === 27) {
-      console.log("esc de imagePopup")
-      handleDelete();
-    }
-  };
+  // const handleEscape = (e) => {
+  //   if (e.keyCode === 27) {
+  //     console.log("esc de imagePopup")
+  //     handleDelete();
+  //   }
+  // };
 
   useEffect(() => {
-    document.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
+    setListOfComponentsToClose([...listOfComponentsToClose, "ImagePopup"]);
+    // document.addEventListener("keydown", handleEscape);
+    // return () => {
+    //   document.removeEventListener("keydown", handleEscape);
+    // };
   }, []);
 
   return (

@@ -19,9 +19,11 @@ export default function NewChannelForm() {
     handleChannelForm,
     setEditActiveChannel,
     showEmojiPickerChannel,
-    setShowEmojiPickerChannel
+    setShowEmojiPickerChannel,
+    listOfComponentsToClose,
+    setListOfComponentsToClose,
   } = useChatContext();
-  
+
   const [channelPopup, setChannelPopup] = useState(false);
   const [loadingImage, setLoadingImage] = useState(false);
   const [wannaChangeImage, setWannaChangeImage] = useState(false);
@@ -56,31 +58,33 @@ export default function NewChannelForm() {
     }
   };
 
-  useEffect(() => {
-    const handleEsc = (e) => {
-      console.log("escape");
-      if (e.keyCode === 27) {
-        setNewChannel(false);
-        setChannelImage(null);
-        setChannelNameForm("");
-        setEditActiveChannel(false);
-      }
-    };
+  // ESTE COMPONENTE SE CERRABA SOLO CON ESC
 
-    // const handleClick = () => {
-    //   console.log('newchannel click')
-    //   if (showEmojiPickerChannel)
-    //   setNewChannel(false)
-    // }
+  // useEffect(() => {
+  //   const handleEsc = (e) => {
+  //     console.log("escape");
+  //     if (e.keyCode === 27) {
+  //       setNewChannel(false);
+  //       setChannelImage(null);
+  //       setChannelNameForm("");
+  //       setEditActiveChannel(false);
+  //     }
+  //   };
 
-    document.addEventListener("keydown", handleEsc);
-    // document.addEventListener("click", handleClick);
+  //   // const handleClick = () => {
+  //   //   console.log('newchannel click')
+  //   //   if (showEmojiPickerChannel)
+  //   //   setNewChannel(false)
+  //   // }
 
-    return () => {
-      document.removeEventListener("keydown", handleEsc);
-      // document.removeEventListener("click", handleClick);
-    };
-  }, []);
+  //   document.addEventListener("keydown", handleEsc);
+  //   // document.addEventListener("click", handleClick);
+
+  //   return () => {
+  //     document.removeEventListener("keydown", handleEsc);
+  //     // document.removeEventListener("click", handleClick);
+  //   };
+  // }, []);
   return (
     <form
       className="flex flex-col z-20 gap-10 text-lg items-center h-screen w-1/3 bg-slate-850"
@@ -161,6 +165,10 @@ export default function NewChannelForm() {
           onClick={(e) => {
             e.stopPropagation();
             setShowEmojiPickerChannel(!showEmojiPickerChannel);
+            setListOfComponentsToClose([
+              ...listOfComponentsToClose,
+              "EmojisPickerChannel",
+            ]);
           }}
         />
         {showEmojiPickerChannel && (
