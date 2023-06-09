@@ -93,6 +93,7 @@ const ChatForm = () => {
         <EmojisPicker
           addEmoji={addEmoji}
           setShowPicker={setShowEmojiPickerChat}
+          whichPicker={"EmojisPickerChat"}
         />
       )}
       <form

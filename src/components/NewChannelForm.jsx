@@ -60,37 +60,15 @@ export default function NewChannelForm() {
 
   // ESTE COMPONENTE SE CERRABA SOLO CON ESC
 
-  // useEffect(() => {
-  //   const handleEsc = (e) => {
-  //     console.log("escape");
-  //     if (e.keyCode === 27) {
-  //       setNewChannel(false);
-  //       setChannelImage(null);
-  //       setChannelNameForm("");
-  //       setEditActiveChannel(false);
-  //     }
-  //   };
-
-  //   // const handleClick = () => {
-  //   //   console.log('newchannel click')
-  //   //   if (showEmojiPickerChannel)
-  //   //   setNewChannel(false)
-  //   // }
-
-  //   document.addEventListener("keydown", handleEsc);
-  //   // document.addEventListener("click", handleClick);
-
-  //   return () => {
-  //     document.removeEventListener("keydown", handleEsc);
-  //     // document.removeEventListener("click", handleClick);
-  //   };
-  // }, []);
   return (
     <form
       className="flex flex-col z-20 gap-10 text-lg items-center h-screen w-1/3 bg-slate-850"
       onClick={(e) => {
         e.stopPropagation();
         setShowEmojiPickerChannel(false);
+        setListOfComponentsToClose(
+          listOfComponentsToClose.filter((component) => component != "EmojisPickerChannel")
+        );
       }}
       onSubmit={(e) => e.preventDefault()}
     >
@@ -98,9 +76,12 @@ export default function NewChannelForm() {
         <IoMdArrowRoundBack
           color={"#06B6D4"}
           className="cursor-pointer text-3xl"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             setChannelImage(null);
             setNewChannel(false);
+            setListOfComponentsToClose(listOfComponentsToClose.filter((component) => (component != "NewChannelForm" && component != "EmojisPickerChannel") ))
+            setShowEmojiPickerChannel(false)
             setChannelNameForm("");
             setEditActiveChannel(false);
           }}
@@ -176,6 +157,7 @@ export default function NewChannelForm() {
             addEmoji={addEmoji}
             setShowPicker={setShowEmojiPickerChannel}
             newChannelForm={true}
+            whichPicker={"EmojisPickerChannel"}
           />
         )}
       </div>

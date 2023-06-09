@@ -22,6 +22,8 @@ export default function Sidebar() {
     setNewChannel,
     listOfComponentsToClose,
     setListOfComponentsToClose,
+    setShowEmojiPickerChat,
+    setFileURL,
   } = useChatContext();
 
   const getChannels = () => {
@@ -46,6 +48,11 @@ export default function Sidebar() {
       onClick={(e) => {
         e.stopPropagation();
         setPopupUser(false);
+        setShowEmojiPickerChat(false)
+        setFileURL(null)
+        setListOfComponentsToClose(
+          listOfComponentsToClose.filter((component) => (component != "EmojisPickerChat" && component != "ImagePopup"))
+        );
       }}
     >
       {/* <div className="bg-slate-800 p-1">
@@ -58,7 +65,9 @@ export default function Sidebar() {
       </div>
       <div
         className="relative w-full rounded px-2 py-2 mb-1 cursor-pointer border-l-4 border-transparent hover:border-cyan-500"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log("agregando al array desde el sidebar")
           setNewChannel(true);
           setListOfComponentsToClose([
             ...listOfComponentsToClose,

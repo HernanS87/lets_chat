@@ -21,6 +21,7 @@ const Chat = () => {
     setChannelNameForm,
     loadingImage,
     listOfComponentsToClose,
+    setListOfComponentsToClose,
     closeAnyComponentWithEsc,
   } = useChatContext();
 
@@ -149,12 +150,12 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    document.addEventListener("keydown",closeAnyComponentWithEsc)
+    document.addEventListener("keydown", closeAnyComponentWithEsc);
 
     return () => {
       document.removeEventListener("keydown", closeAnyComponentWithEsc);
     };
-  }, [listOfComponentsToClose])
+  }, [listOfComponentsToClose]);
 
   useEffect(() => {
     getMessages();
@@ -183,6 +184,13 @@ const Chat = () => {
             className="w-full flex items-center px-2 gap-3 z-10 h-14 text-xl bg-slate-850 cursor-pointer"
             onClick={() => {
               setEditActiveChannel(true);
+              if(!listOfComponentsToClose.includes("NewChannelForm")) {
+                console.log("no estaba en el array")
+                setListOfComponentsToClose([
+                  ...listOfComponentsToClose,
+                  "NewChannelForm",
+                ]);
+              }
               setChannelImage(activeChannel.image);
               setChannelNameForm(activeChannel.name);
             }}

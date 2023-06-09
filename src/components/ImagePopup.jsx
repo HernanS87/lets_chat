@@ -12,21 +12,15 @@ const ImagePopup = () => {
 
   const handleDelete = () => {
     setFileURL(null);
+    setListOfComponentsToClose(
+      listOfComponentsToClose.filter((component) => component != "ImagePopup")
+    );
   };
 
-  // const handleEscape = (e) => {
-  //   if (e.keyCode === 27) {
-  //     console.log("esc de imagePopup")
-  //     handleDelete();
-  //   }
-  // };
-
   useEffect(() => {
-    setListOfComponentsToClose([...listOfComponentsToClose, "ImagePopup"]);
-    // document.addEventListener("keydown", handleEscape);
-    // return () => {
-    //   document.removeEventListener("keydown", handleEscape);
-    // };
+    if (!listOfComponentsToClose.includes("ImagePopup")) {
+      setListOfComponentsToClose([...listOfComponentsToClose, "ImagePopup"]);
+    }
   }, []);
 
   return (
