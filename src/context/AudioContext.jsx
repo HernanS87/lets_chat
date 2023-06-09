@@ -17,8 +17,6 @@ export const AudioContextProvider = ({ children }) => {
 
   const [justOnePlayer, setJustOnePlayer] = useState(null);
 
-
-
   const startTimer = () => {
     intervalRef.current = setInterval(() => {
       setDecimas((decimas) => decimas + 1);
@@ -29,13 +27,33 @@ export const AudioContextProvider = ({ children }) => {
     clearInterval(intervalRef.current);
   };
 
+  const checkMicrophonePermission = async () => {
+    let permission;
+    try {
+      console.log("pidiendo permiso");
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log("Microfono activado", stream);
+      permission = true;
+      // El micrófono está habilitado, puedes comenzar la grabación aquí
+    } catch (error) {
+      console.log("Error:", error);
+      permission = false;
+    }
+    return permission;
+  };
+
   const startRecording = async () => {
-    setActivateMicro(true);
-    setIsRecording(true);
-    startTimer();
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorderRef.current = new MediaRecorder(stream);
-    mediaRecorderRef.current.start();
+    const permission = await checkMicrophonePermission();
+    if (permission) {
+      setActivateMicro(true);
+      setIsRecording(true);
+      startTimer();
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      mediaRecorderRef.current.start();
+    } else {
+      console.log("No se pudo acceder al micrófono.");
+    }
   };
 
   const stopRecording = async () => {
