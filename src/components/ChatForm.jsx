@@ -12,7 +12,6 @@ import AudioRecorder from "./AudioRecorder";
 import EmojisPicker from "./EmojisPicker";
 
 const ChatForm = () => {
-  const [showPicker, setShowPicker] = useState(false);
   const [textAreaScroll, setTextAreaScroll] = useState(false);
   const {
     activeChannel,
@@ -27,14 +26,16 @@ const ChatForm = () => {
     cancelEdit,
     setCancelEdit,
     txtAreaRef,
+    showEmojiPickerChat,
+    setShowEmojiPickerChat,
   } = useChatContext();
 
   const { activateMicro, startRecording } = useAudioContext();
 
   const addEmoji = (data) => {
     txtAreaRef.current.value = txtAreaRef.current.value + data.emoji;
-    setTextAreaValue(true)
-    adjustSize()
+    setTextAreaValue(true);
+    adjustSize();
   };
 
   const adjustSize = () => {
@@ -61,7 +62,7 @@ const ChatForm = () => {
   };
   const handleEscape = (e) => {
     if (e.keyCode === 27 && msgToEdit) {
-      console.log('esc de chatform')
+      console.log("esc de chatform");
       sendEditedMsg();
     }
   };
@@ -86,7 +87,12 @@ const ChatForm = () => {
   return (
     <>
       {fileURL && <ImagePopup />}
-      {showPicker && <EmojisPicker addEmoji={addEmoji} setShowPicker={setShowPicker}  />}
+      {showEmojiPickerChat && (
+        <EmojisPicker
+          addEmoji={addEmoji}
+          setShowPicker={setShowEmojiPickerChat}
+        />
+      )}
       <form
         id="form"
         onSubmit={(e) => {
@@ -153,8 +159,9 @@ const ChatForm = () => {
           className="cursor-pointer mx-1"
           size={30}
           onClick={(e) => {
-            e.stopPropagation()
-            setShowPicker(!showPicker)}}
+            e.stopPropagation();
+            setShowEmojiPickerChat(!showEmojiPickerChat);
+          }}
         />
         <button
           type=""

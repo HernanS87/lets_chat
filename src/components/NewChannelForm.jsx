@@ -18,8 +18,10 @@ export default function NewChannelForm() {
     setChannelNameForm,
     handleChannelForm,
     setEditActiveChannel,
+    showEmojiPickerChannel,
+    setShowEmojiPickerChannel
   } = useChatContext();
-  const [showPicker, setShowPicker] = useState(false);
+  
   const [channelPopup, setChannelPopup] = useState(false);
   const [loadingImage, setLoadingImage] = useState(false);
   const [wannaChangeImage, setWannaChangeImage] = useState(false);
@@ -67,7 +69,7 @@ export default function NewChannelForm() {
 
     // const handleClick = () => {
     //   console.log('newchannel click')
-    //   if (showPicker)
+    //   if (showEmojiPickerChannel)
     //   setNewChannel(false)
     // }
 
@@ -84,7 +86,7 @@ export default function NewChannelForm() {
       className="flex flex-col z-20 gap-10 text-lg items-center h-screen w-1/3 bg-slate-850"
       onClick={(e) => {
         e.stopPropagation();
-        setShowPicker(false);
+        setShowEmojiPickerChannel(false);
       }}
       onSubmit={(e) => e.preventDefault()}
     >
@@ -158,13 +160,13 @@ export default function NewChannelForm() {
           size={30}
           onClick={(e) => {
             e.stopPropagation();
-            setShowPicker(!showPicker);
+            setShowEmojiPickerChannel(!showEmojiPickerChannel);
           }}
         />
-        {showPicker && (
+        {showEmojiPickerChannel && (
           <EmojisPicker
             addEmoji={addEmoji}
-            setShowPicker={setShowPicker}
+            setShowPicker={setShowEmojiPickerChannel}
             newChannelForm={true}
           />
         )}

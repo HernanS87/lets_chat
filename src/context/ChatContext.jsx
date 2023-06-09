@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { db, storage } from "../firebase/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
-import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "./AuthContext";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { toast } from "react-toastify";
@@ -27,6 +26,24 @@ export const ChatContextProvider = ({ children }) => {
   const [loadingImage, setLoadingImage] = useState(false);
 
   const txtAreaRef = useRef();
+
+  const listOfComponentsToClose = [];
+  const [showEmojiPickerChannel, setShowEmojiPickerChannel] = useState(false);
+  const [showEmojiPickerChat, setShowEmojiPickerChat] = useState(false);
+
+  const closeAnyComponentWithEsc = (e) => {
+    if (e.keyCode === 27) {
+      let componentToClose = listOfComponentsToClose.pop();
+      switch (componentToClose) {
+        case "EmojisPickerFormChat":
+          break;
+
+        default:
+          console.log("No hay ningun componente para cerrar");
+          break;
+      }
+    }
+  };
 
   const [cancelEdit, setCancelEdit] = useState(false);
   const { user } = useAuthContext();
@@ -185,6 +202,11 @@ export const ChatContextProvider = ({ children }) => {
         editActiveChannel,
         setEditActiveChannel,
         loadingImage,
+        listOfComponentsToClose,
+        showEmojiPickerChannel,
+        setShowEmojiPickerChannel,
+        showEmojiPickerChat,
+        setShowEmojiPickerChat,
       }}
     >
       {children}
