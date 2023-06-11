@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ImagePopup from "./ImagePopup";
 import AudioRecorder from "./AudioRecorder";
 import EmojisPicker from "./EmojisPicker";
+import { list } from "firebase/storage";
 
 const ChatForm = () => {
   const [textAreaScroll, setTextAreaScroll] = useState(false);
@@ -30,6 +31,7 @@ const ChatForm = () => {
     setShowEmojiPickerChat,
     listOfComponentsToClose,
     setListOfComponentsToClose,
+    sendEditedMsg,
   } = useChatContext();
 
   const { activateMicro, startRecording } = useAudioContext();
@@ -55,31 +57,24 @@ const ChatForm = () => {
     }
   };
 
-  const sendEditedMsg = () => {
-    txtAreaRef.current.value = "";
-    setMsgToEdit("");
-    setTextAreaValue(false);
-    setFileURL("");
-    setCancelEdit(false);
-  };
-  const handleEscape = (e) => {
-    if (e.keyCode === 27 && msgToEdit) {
-      console.log("esc de chatform");
-      sendEditedMsg();
-    }
-  };
+  // const handleEscape = (e) => {
+  //   if (e.keyCode === 27 && msgToEdit) {
+  //     console.log("esc de chatform");
+  //     sendEditedMsg();
+  //   }
+  // };
 
   useEffect(() => {
-    document.addEventListener("keydown", handleEscape);
+    // document.addEventListener("keydown", handleEscape);
 
     if (msgToEdit) {
       txtAreaRef.current.value = msgToEdit.message;
       setTextAreaValue(true);
       setCancelEdit(true);
     }
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
+    // return () => {
+    //   document.removeEventListener("keydown", handleEscape);
+    // };
   }, [msgToEdit]);
 
   useEffect(() => {
@@ -109,7 +104,10 @@ const ChatForm = () => {
           {cancelEdit && (
             <div
               className="absolute top-neg-1 w-full bg-slate-900 text-xs text-slate-400 font-medium pl-2 py-1 rounded flex items-center cursor-pointer"
-              onClick={sendEditedMsg}
+              onClick={() => {
+                setListOfComponentsToClose(listOfComponentsToClose.filter((component) => (component != "EditMsg" && component != "ImagePopup") ))
+                sendEditedMsg()
+              }}
             >
               <MdCancel size={15} className="mr-1" />
               Editando mensaje
@@ -164,7 +162,10 @@ const ChatForm = () => {
           onClick={(e) => {
             e.stopPropagation();
             setShowEmojiPickerChat(!showEmojiPickerChat);
-            setListOfComponentsToClose([...listOfComponentsToClose,"EmojisPickerChat"])
+            setListOfComponentsToClose([
+              ...listOfComponentsToClose,
+              "EmojisPickerChat",
+            ]);
           }}
         />
         <button

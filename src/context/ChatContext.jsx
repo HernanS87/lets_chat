@@ -27,6 +27,15 @@ export const ChatContextProvider = ({ children }) => {
 
   const txtAreaRef = useRef();
 
+  const sendEditedMsg = () => {
+    console.log("ejecutando sendEditedMsg()");
+    txtAreaRef.current.value = "";
+    setMsgToEdit("");
+    setTextAreaValue(false);
+    setFileURL("");
+    setCancelEdit(false);
+  };
+
   const [listOfComponentsToClose, setListOfComponentsToClose] = useState([]);
   const [showEmojiPickerChannel, setShowEmojiPickerChannel] = useState(false);
   const [showEmojiPickerChat, setShowEmojiPickerChat] = useState(false);
@@ -50,6 +59,10 @@ export const ChatContextProvider = ({ children }) => {
     setEditActiveChannel(false);
   };
 
+  const closeEditingMsg = () => {
+    sendEditedMsg();
+  };
+
   const closeAnyComponentWithEsc = (e) => {
     if (e.keyCode === 27) {
       console.log(
@@ -71,6 +84,9 @@ export const ChatContextProvider = ({ children }) => {
           break;
         case "NewChannelForm":
           closeNewChannelForm();
+          break;
+        case "EditMsg":
+          closeEditingMsg();
           break;
         default:
           console.log("No hay ningun componente para cerrar");
@@ -243,6 +259,7 @@ export const ChatContextProvider = ({ children }) => {
         listOfComponentsToClose,
         setListOfComponentsToClose,
         closeAnyComponentWithEsc,
+        sendEditedMsg,
       }}
     >
       {children}

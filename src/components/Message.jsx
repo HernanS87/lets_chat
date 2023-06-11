@@ -23,19 +23,24 @@ const Message = ({
 }) => {
   const msgRef = useRef();
   const { user } = useAuthContext();
-  const { activeChannel, setMsgToEdit, setFileURL } = useChatContext();
+  const {
+    activeChannel,
+    setMsgToEdit,
+    setFileURL,
+    listOfComponentsToClose,
+    setListOfComponentsToClose,
+  } = useChatContext();
   const options = { hour: "numeric", minute: "numeric" };
   const date = new Date(timestamp);
   const [showHour, setShowHour] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [lastChildOptions, setLastChildOptions] = useState(false);
 
-  
   const handleDelete = async () => {
     const docRef = doc(db, `canales/${activeChannel.id}/mensajes/${id}`);
     await deleteDoc(docRef);
   };
-  
+
   const handleEdit = () => {
     setMsgToEdit({
       username,
@@ -48,12 +53,15 @@ const Message = ({
       file,
     });
     setFileURL(file);
+    if (!listOfComponentsToClose.includes("EditMsg")) {
+      setListOfComponentsToClose([...listOfComponentsToClose, "EditMsg"]);
+    }
   };
-  
+
   useEffect(() => {
     msgRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
   }, []);
-  
+
   return (
     <li
       className="w-full shadow-md flex flex-col pl-4 pr-12 relative hover:bg-slate-850  transition-all ease-in-out"
@@ -97,7 +105,7 @@ const Message = ({
                 !sameUser ? "top-4 right-1" : "top-1 right-1"
               } ${sameUser && !showHour ? "hidden" : " block"}`}
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
                 console.log(e.pageY);
                 if (e.pageY > 620) {
                   setLastChildOptions(true);
@@ -112,31 +120,34 @@ const Message = ({
       </div>
       {file && (
         <a href={file} target="_blank" className="w-fit">
-          <img src={file} alt={uid} className="max-w-xs lg:max-w-xl pt-3 max-h-[300px] object-cover" />
+          <img
+            src={file}
+            alt={uid}
+            className="max-w-xs lg:max-w-xl pt-3 max-h-[300px] object-cover"
+          />
         </a>
       )}
-      {audio && <AudioPlayer {...audio} id={id}/>}
+      {audio && <AudioPlayer {...audio} id={id} />}
       <div className="">
-
-      {message && (
-        <p className={`${!sameUser && "pt-3"} break-words `}>
-          {message.split("\\n").length > 1
-            ? message
-                .replace(/\\"/g, '"')
-                .slice(1, -1)
-                .split("\\n")
-                .map((el, ind) => (
-                  <span key={ind}>
-                    <span>{el}</span>
-                    <br />
-                  </span>
-                ))
-            : message.replace(/\\"/g, '"').slice(1, -1)}
-          <span className="italic text-xs text-slate-400 font-medium">
-            {edited ? " (editado)" : ""}
-          </span>
-        </p>
-      )}
+        {message && (
+          <p className={`${!sameUser && "pt-3"} break-words `}>
+            {message.split("\\n").length > 1
+              ? message
+                  .replace(/\\"/g, '"')
+                  .slice(1, -1)
+                  .split("\\n")
+                  .map((el, ind) => (
+                    <span key={ind}>
+                      <span>{el}</span>
+                      <br />
+                    </span>
+                  ))
+              : message.replace(/\\"/g, '"').slice(1, -1)}
+            <span className="italic text-xs text-slate-400 font-medium">
+              {edited ? " (editado)" : ""}
+            </span>
+          </p>
+        )}
       </div>
       <p
         className={`italic text-xs text-slate-400 self-end font-medium absolute bottom-0 right-1  ${
