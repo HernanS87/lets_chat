@@ -1,4 +1,10 @@
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  limit,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../firebase/firebase";
 import ChatForm from "../components/ChatForm";
@@ -12,7 +18,6 @@ import { useChatContext } from "../context/ChatContext";
 import sinImagen from "../assets/sinImagen.jpg";
 
 const Chat = () => {
-  const [allMessages, setAllMessages] = useState([]);
   const [dates, setDates] = useState([]);
   const {
     activeChannel,
@@ -23,24 +28,40 @@ const Chat = () => {
     listOfComponentsToClose,
     setListOfComponentsToClose,
     closeAnyComponentWithEsc,
+    setLetScrollToBottom,
+    cantOfMsg,
+    setCantOfMsg,
+    allMessages,
+    setAllMessages,
+    msgToScrollRef,
+    scrollToMsgRef,
+    onTop,
+    setOnTop,
   } = useChatContext();
 
   const getMessages = () => {
     if (activeChannel) {
       const msgRef = collection(db, `canales/${activeChannel.id}/mensajes`);
 
-      const q = query(msgRef, orderBy("timestamp", "asc"));
+      const q = query(msgRef, orderBy("timestamp", "desc"), limit(cantOfMsg));
 
       onSnapshot(q, (snap) => {
         const msgs = snap.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
         }));
-        setAllMessages(msgs);
+        // objetos.sort((a, b) => a.fecha - b.fecha)
+        setAllMessages(
+          msgs
+            .sort((a, b) => a.timestamp - b.timestamp)
+            .map((el, index) => ({ ...el, position: index }))
+        );
+
         const dates = [
           ...new Set(msgs.map((el) => new Date(el.timestamp).toDateString())),
         ];
         setDates(dates);
+        
       });
     }
   };
@@ -159,7 +180,7 @@ const Chat = () => {
 
   useEffect(() => {
     getMessages();
-  }, [activeChannel]);
+  }, [activeChannel, cantOfMsg]);
 
   return (
     <div className="flex">
@@ -184,8 +205,8 @@ const Chat = () => {
             className="w-full flex items-center px-2 gap-3 z-10 h-14 text-xl bg-slate-850 cursor-pointer"
             onClick={() => {
               setEditActiveChannel(true);
-              if(!listOfComponentsToClose.includes("NewChannelForm")) {
-                console.log("no estaba en el array")
+              if (!listOfComponentsToClose.includes("NewChannelForm")) {
+                console.log("no estaba en el array");
                 setListOfComponentsToClose([
                   ...listOfComponentsToClose,
                   "NewChannelForm",
@@ -207,7 +228,18 @@ const Chat = () => {
               <HashLoader size={80} color={"#36d7b7"} />
             </div>
           ) : (
-            <div className="w-full h-[calc(100vh-120px)] flex flex-col mt-1 pt-1 pb-1 items-center justify-start scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200">
+            // SCROOOOOOOOOOOOOOOOOOOOOOOOOLLLLLLLLLLLLLLLLLLLLLL
+            <div
+              className="w-full h-[calc(100vh-120px)] flex flex-col mt-1 pt-1 pb-1 items-center justify-start scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200"
+              onScroll={(e) => {
+                if (e.target.scrollTop == 0 && allMessages.length >= 15) {
+                  console.log("puede que acá me este fallando en chat.jsx")
+                  setLetScrollToBottom(false);
+                  setOnTop(true)
+                  setCantOfMsg(cantOfMsg + 10);
+                }
+              }}
+            >
               {dates.map((date, index) => {
                 let refHour = 0;
                 const arrayTemp = allMessages.filter(

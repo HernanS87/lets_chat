@@ -20,6 +20,7 @@ const Message = ({
   file,
   sameUser,
   audio,
+  position,
 }) => {
   const msgRef = useRef();
   const { user } = useAuthContext();
@@ -29,6 +30,12 @@ const Message = ({
     setFileURL,
     listOfComponentsToClose,
     setListOfComponentsToClose,
+    letScrollToBottom,
+    msgToScrollRef,
+    allMessages,
+    scrollToMsgRef,
+    onTop,
+        setOnTop,
   } = useChatContext();
   const options = { hour: "numeric", minute: "numeric" };
   const date = new Date(timestamp);
@@ -59,13 +66,33 @@ const Message = ({
   };
 
   useEffect(() => {
-    msgRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
-  }, []);
+    if (letScrollToBottom) {
+      console.log("scroll hacia el ultimo mjs", "allmessages", allMessages.length);
+      if(msgRef.current){
+        msgRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
+      }
+    } else if (allMessages.length > 15 && onTop) {
+      console.log("onTop", onTop)
+      console.log("scroll hacia el msj referencia desde message.jsx")
+      scrollToMsgRef()
+    }
+    // if (allMessages.length > 15 && position == 10 && !letScrollToBottom) {
+      
+      
+    //   scrollToMsgRef();
+    // }
+  }, [letScrollToBottom]);
 
   return (
     <li
       className="w-full shadow-md flex flex-col pl-4 pr-12 relative hover:bg-slate-850  transition-all ease-in-out"
-      ref={msgRef}
+      ref={allMessages.length > 15 && position == 10 ? msgToScrollRef : msgRef}
+      onClick={() => {
+        console.log("position:", position);
+        if ((allMessages.length > 15 && position == 10)) {
+          console.log("Este es el mjs de referencia");
+        }
+      }}
       onMouseOver={() => {
         setShowHour(true);
       }}

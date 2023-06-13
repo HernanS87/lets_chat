@@ -25,7 +25,27 @@ export const ChatContextProvider = ({ children }) => {
 
   const [loadingImage, setLoadingImage] = useState(false);
 
-  const txtAreaRef = useRef();
+  const txtAreaRef = useRef(null);
+  const msgToScrollRef = useRef(null);
+  const [onTop, setOnTop] = useState(false)
+
+  const [letScrollToBottom, setLetScrollToBottom] = useState(true);
+  const [cantOfMsg, setCantOfMsg] = useState(15);
+  const [allMessages, setAllMessages] = useState([]);
+
+  const [cancelEdit, setCancelEdit] = useState(false);
+  const { user } = useAuthContext();
+
+  const [listOfComponentsToClose, setListOfComponentsToClose] = useState([]);
+  const [showEmojiPickerChannel, setShowEmojiPickerChannel] = useState(false);
+  const [showEmojiPickerChat, setShowEmojiPickerChat] = useState(false);
+
+
+  const scrollToMsgRef = () => {
+    console.log("scrollToMsgRef ejecutandose")
+    msgToScrollRef.current.scrollIntoView({ behavior: "smooth" });
+    setOnTop(false)
+  };
 
   const sendEditedMsg = () => {
     console.log("ejecutando sendEditedMsg()");
@@ -36,10 +56,7 @@ export const ChatContextProvider = ({ children }) => {
     setCancelEdit(false);
   };
 
-  const [listOfComponentsToClose, setListOfComponentsToClose] = useState([]);
-  const [showEmojiPickerChannel, setShowEmojiPickerChannel] = useState(false);
-  const [showEmojiPickerChat, setShowEmojiPickerChat] = useState(false);
-
+  
   const closeEmojisPickerChat = () => {
     setShowEmojiPickerChat(false);
   };
@@ -95,9 +112,6 @@ export const ChatContextProvider = ({ children }) => {
     }
   };
 
-  const [cancelEdit, setCancelEdit] = useState(false);
-  const { user } = useAuthContext();
-
   const uploadFile = async (file, type) => {
     const storageRef = ref(storage, `${type}/${v4()}`);
     await uploadBytes(storageRef, file);
@@ -110,6 +124,9 @@ export const ChatContextProvider = ({ children }) => {
     txtAreaRef.current.value = "";
     setTextAreaValue(false);
     setCancelEdit(false);
+
+    setLetScrollToBottom(true);
+
     if (msgValue || fileURL || newAudio) {
       if (msgToEdit) {
         const msgRef = doc(
@@ -260,6 +277,16 @@ export const ChatContextProvider = ({ children }) => {
         setListOfComponentsToClose,
         closeAnyComponentWithEsc,
         sendEditedMsg,
+        letScrollToBottom,
+        setLetScrollToBottom,
+        cantOfMsg,
+        setCantOfMsg,
+        msgToScrollRef,
+        allMessages,
+        setAllMessages,
+        scrollToMsgRef,
+        onTop,
+        setOnTop,
       }}
     >
       {children}
