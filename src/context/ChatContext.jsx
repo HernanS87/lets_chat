@@ -27,10 +27,10 @@ export const ChatContextProvider = ({ children }) => {
 
   const txtAreaRef = useRef(null);
   const msgToScrollRef = useRef(null);
-  const [onTop, setOnTop] = useState(false)
+  const [onTop, setOnTop] = useState(false);
 
   const [letScrollToBottom, setLetScrollToBottom] = useState(true);
-  const [cantOfMsg, setCantOfMsg] = useState(15);
+  const [cantOfMsg, setCantOfMsg] = useState(20);
   const [allMessages, setAllMessages] = useState([]);
 
   const [cancelEdit, setCancelEdit] = useState(false);
@@ -40,12 +40,17 @@ export const ChatContextProvider = ({ children }) => {
   const [showEmojiPickerChannel, setShowEmojiPickerChannel] = useState(false);
   const [showEmojiPickerChat, setShowEmojiPickerChat] = useState(false);
 
+  const permissionToScroll = (top = false,bottom = false) => {
+    setOnTop(top)
+    setLetScrollToBottom(bottom)
+  }
 
   const scrollToMsgRef = () => {
-    console.log("scrollToMsgRef ejecutandose")
     msgToScrollRef.current.scrollIntoView({ behavior: "smooth" });
-    setOnTop(false)
+    permissionToScroll(false,false)
   };
+
+  
 
   const sendEditedMsg = () => {
     console.log("ejecutando sendEditedMsg()");
@@ -56,7 +61,6 @@ export const ChatContextProvider = ({ children }) => {
     setCancelEdit(false);
   };
 
-  
   const closeEmojisPickerChat = () => {
     setShowEmojiPickerChat(false);
   };
@@ -125,8 +129,6 @@ export const ChatContextProvider = ({ children }) => {
     setTextAreaValue(false);
     setCancelEdit(false);
 
-    setLetScrollToBottom(true);
-
     if (msgValue || fileURL || newAudio) {
       if (msgToEdit) {
         const msgRef = doc(
@@ -143,6 +145,7 @@ export const ChatContextProvider = ({ children }) => {
         });
         setMsgToEdit("");
       } else {
+        permissionToScroll(false,true)
         const msgRef = collection(db, `canales/${activeChannel.id}/mensajes`);
         const imgURL = fileURL;
         setFileURL("");
@@ -278,7 +281,6 @@ export const ChatContextProvider = ({ children }) => {
         closeAnyComponentWithEsc,
         sendEditedMsg,
         letScrollToBottom,
-        setLetScrollToBottom,
         cantOfMsg,
         setCantOfMsg,
         msgToScrollRef,
@@ -286,7 +288,7 @@ export const ChatContextProvider = ({ children }) => {
         setAllMessages,
         scrollToMsgRef,
         onTop,
-        setOnTop,
+        permissionToScroll,
       }}
     >
       {children}

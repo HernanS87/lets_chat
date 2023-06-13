@@ -28,15 +28,11 @@ const Chat = () => {
     listOfComponentsToClose,
     setListOfComponentsToClose,
     closeAnyComponentWithEsc,
-    setLetScrollToBottom,
     cantOfMsg,
     setCantOfMsg,
     allMessages,
     setAllMessages,
-    msgToScrollRef,
-    scrollToMsgRef,
-    onTop,
-    setOnTop,
+    permissionToScroll,
   } = useChatContext();
 
   const getMessages = () => {
@@ -50,7 +46,6 @@ const Chat = () => {
           ...doc.data(),
           id: doc.id,
         }));
-        // objetos.sort((a, b) => a.fecha - b.fecha)
         setAllMessages(
           msgs
             .sort((a, b) => a.timestamp - b.timestamp)
@@ -61,7 +56,6 @@ const Chat = () => {
           ...new Set(msgs.map((el) => new Date(el.timestamp).toDateString())),
         ];
         setDates(dates);
-        
       });
     }
   };
@@ -233,9 +227,8 @@ const Chat = () => {
               className="w-full h-[calc(100vh-120px)] flex flex-col mt-1 pt-1 pb-1 items-center justify-start scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200"
               onScroll={(e) => {
                 if (e.target.scrollTop == 0 && allMessages.length >= 15) {
-                  console.log("puede que acá me este fallando en chat.jsx")
-                  setLetScrollToBottom(false);
-                  setOnTop(true)
+                  console.log("SCROLLTOP EN CERO");
+                  permissionToScroll(true)
                   setCantOfMsg(cantOfMsg + 10);
                 }
               }}

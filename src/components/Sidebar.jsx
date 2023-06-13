@@ -25,7 +25,7 @@ export default function Sidebar() {
     setShowEmojiPickerChat,
     setFileURL,
     setCantOfMsg,
-    setLetScrollToBottom,
+    permissionToScroll,
   } = useChatContext();
 
   const getChannels = () => {
@@ -90,8 +90,8 @@ export default function Sidebar() {
                 key={index}
                 className=" rounded  px-2 py-2 mb-1 cursor-pointer hover:bg-slate-900"
                 onClick={() => {
-                  setLetScrollToBottom(true)
-                  setCantOfMsg(15)
+                  permissionToScroll(false,true)
+                  setCantOfMsg(20)
                   setActiveChannel({ ...channel });
                 }}
               >

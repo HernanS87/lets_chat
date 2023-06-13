@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { BsThreeDots } from "react-icons/bs";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import { deleteDoc, doc} from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useChatContext } from "../context/ChatContext";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OptionsPopup from "./OptionsPopup";
 import AudioPlayer from "./AudioPlayer";
@@ -35,7 +34,7 @@ const Message = ({
     allMessages,
     scrollToMsgRef,
     onTop,
-        setOnTop,
+    permissionToScroll,
   } = useChatContext();
   const options = { hour: "numeric", minute: "numeric" };
   const date = new Date(timestamp);
@@ -44,8 +43,10 @@ const Message = ({
   const [lastChildOptions, setLastChildOptions] = useState(false);
 
   const handleDelete = async () => {
+    permissionToScroll(false,false)
     const docRef = doc(db, `canales/${activeChannel.id}/mensajes/${id}`);
     await deleteDoc(docRef);
+    console.log("BORRO MJS");
   };
 
   const handleEdit = () => {
@@ -67,29 +68,21 @@ const Message = ({
 
   useEffect(() => {
     if (letScrollToBottom) {
-      console.log("scroll hacia el ultimo mjs", "allmessages", allMessages.length);
-      if(msgRef.current){
+      if (msgRef.current) {
         msgRef.current.scrollIntoView({ block: "end", behavior: "smooth" });
       }
-    } else if (allMessages.length > 15 && onTop) {
-      console.log("onTop", onTop)
-      console.log("scroll hacia el msj referencia desde message.jsx")
-      scrollToMsgRef()
+    } else if (allMessages.length > 20 && onTop) {
+      scrollToMsgRef();
     }
-    // if (allMessages.length > 15 && position == 10 && !letScrollToBottom) {
-      
-      
-    //   scrollToMsgRef();
-    // }
   }, [letScrollToBottom]);
 
   return (
     <li
       className="w-full shadow-md flex flex-col pl-4 pr-12 relative hover:bg-slate-850  transition-all ease-in-out"
-      ref={allMessages.length > 15 && position == 10 ? msgToScrollRef : msgRef}
+      ref={allMessages.length > 20 && position == 6 ? msgToScrollRef : msgRef}
       onClick={() => {
         console.log("position:", position);
-        if ((allMessages.length > 15 && position == 10)) {
+        if (allMessages.length > 20 && position == 6) {
           console.log("Este es el mjs de referencia");
         }
       }}
