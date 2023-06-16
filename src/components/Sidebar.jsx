@@ -9,13 +9,16 @@ import UserPopup from "./UserPopup";
 import { AiFillPlusCircle } from "react-icons/ai";
 import NewChannelForm from "./NewChannelForm";
 import { HashLoader } from "react-spinners";
+import { useAudioContext } from "../context/AudioContext";
 
 export default function Sidebar() {
   const [allChannels, setAllChannels] = useState(null);
-  const { setActiveChannel, editActiveChannel } = useChatContext();
-
+  const {cancelRecording, mediaRecorderRef} = useAudioContext()
   const { user } = useAuthContext();
   const {
+    activeChannel,
+    setActiveChannel,
+    editActiveChannel,
     popupUser,
     setPopupUser,
     newChannel,
@@ -26,6 +29,7 @@ export default function Sidebar() {
     setFileURL,
     setCantOfMsg,
     permissionToScroll,
+    resetChatFormFields,
   } = useChatContext();
 
   const getChannels = () => {
@@ -50,10 +54,15 @@ export default function Sidebar() {
       onClick={(e) => {
         e.stopPropagation();
         setPopupUser(false);
-        setShowEmojiPickerChat(false)
-        setFileURL(null)
+        setShowEmojiPickerChat(false);
+        setFileURL(null);
         setListOfComponentsToClose(
-          listOfComponentsToClose.filter((component) => (component != "EmojisPickerChat" && component != "ImagePopup"))
+          listOfComponentsToClose.filter(
+            (component) =>
+              component != "EmojisPickerChat" &&
+              component != "ImagePopup" &&
+              component != "EditMsg"
+          )
         );
       }}
     >
@@ -69,7 +78,6 @@ export default function Sidebar() {
         className="relative w-full rounded px-2 py-2 mb-1 cursor-pointer border-l-4 border-transparent hover:border-cyan-500"
         onClick={(e) => {
           e.stopPropagation();
-          console.log("agregando al array desde el sidebar")
           setNewChannel(true);
           setListOfComponentsToClose([
             ...listOfComponentsToClose,
@@ -90,9 +98,15 @@ export default function Sidebar() {
                 key={index}
                 className=" rounded  px-2 py-2 mb-1 cursor-pointer hover:bg-slate-900"
                 onClick={() => {
-                  permissionToScroll(false,true)
-                  setCantOfMsg(20)
-                  setActiveChannel({ ...channel });
+                  if(activeChannel.name != channel.name){
+                    if (mediaRecorderRef.current){
+                      cancelRecording()
+                    }
+                    permissionToScroll(false, true);
+                    setCantOfMsg(20);
+                    resetChatFormFields();
+                    setActiveChannel({ ...channel });
+                  }
                 }}
               >
                 <div className="flex gap-4 items-center">

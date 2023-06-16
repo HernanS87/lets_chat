@@ -61,6 +61,9 @@ const Message = ({
       file,
     });
     setFileURL(file);
+    if(!file){
+      setListOfComponentsToClose(listOfComponentsToClose.filter((component) => component != "ImagePopup"))
+    }
     if (!listOfComponentsToClose.includes("EditMsg")) {
       setListOfComponentsToClose([...listOfComponentsToClose, "EditMsg"]);
     }

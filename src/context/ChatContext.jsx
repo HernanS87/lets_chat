@@ -52,12 +52,13 @@ export const ChatContextProvider = ({ children }) => {
 
   
 
-  const sendEditedMsg = () => {
-    console.log("ejecutando sendEditedMsg()");
-    txtAreaRef.current.value = "";
-    setMsgToEdit("");
-    setTextAreaValue(false);
-    setFileURL("");
+  const resetChatFormFields = () => {
+    if(txtAreaRef.current){
+      txtAreaRef.current.value = "";
+      setMsgToEdit("");
+    }
+    setTextAreaValue("")
+    setFileURL(null);
     setCancelEdit(false);
   };
 
@@ -81,7 +82,7 @@ export const ChatContextProvider = ({ children }) => {
   };
 
   const closeEditingMsg = () => {
-    sendEditedMsg();
+    resetChatFormFields();
   };
 
   const closeAnyComponentWithEsc = (e) => {
@@ -125,9 +126,8 @@ export const ChatContextProvider = ({ children }) => {
   const handleMessage = async (newAudio = null) => {
     console.log("handlemMessage", txtAreaRef.current.value);
     const msgValue = txtAreaRef.current.value.trim();
-    txtAreaRef.current.value = "";
-    setTextAreaValue(false);
-    setCancelEdit(false);
+    const imgURL = fileURL;
+    resetChatFormFields()
 
     if (msgValue || fileURL || newAudio) {
       if (msgToEdit) {
@@ -135,20 +135,15 @@ export const ChatContextProvider = ({ children }) => {
           db,
           `canales/${activeChannel.id}/mensajes/${msgToEdit.id}`
         );
-        const imgURL = fileURL;
-        setFileURL("");
         await updateDoc(msgRef, {
           ...msgToEdit,
           message: JSON.stringify(msgValue),
           file: imgURL,
           edited: true,
         });
-        setMsgToEdit("");
       } else {
         permissionToScroll(false,true)
         const msgRef = collection(db, `canales/${activeChannel.id}/mensajes`);
-        const imgURL = fileURL;
-        setFileURL("");
         await addDoc(msgRef, {
           username: user.displayName,
           uid: user.uid,
@@ -279,7 +274,7 @@ export const ChatContextProvider = ({ children }) => {
         listOfComponentsToClose,
         setListOfComponentsToClose,
         closeAnyComponentWithEsc,
-        sendEditedMsg,
+        resetChatFormFields,
         letScrollToBottom,
         cantOfMsg,
         setCantOfMsg,
