@@ -3,26 +3,15 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// const firebaseConfig = {
-// 	apiKey: 'AIzaSyDWAfbjsR-CIVfyyVAh3VblC-nEPbKf_G0',
-// 	authDomain: 'firestore-realtime-chat-react.firebaseapp.com',
-// 	projectId: 'firestore-realtime-chat-react',
-// 	storageBucket: 'firestore-realtime-chat-react.appspot.com',
-// 	messagingSenderId: '696118136133',
-// 	appId: '1:696118136133:web:5b8a7b0dcd4a721f72022c',
-// };
 const firebaseConfig = {
-  apiKey: "AIzaSyBijCv6Py-n5Z4cfYSITeMwz3EgOfnYyKE",
-  authDomain: "lets-chat-8.firebaseapp.com",
-  projectId: "lets-chat-8",
-  storageBucket: "lets-chat-8.appspot.com",
-  messagingSenderId: "1080959886944",
-  appId: "1:1080959886944:web:aadb2e3ae235d462a24505",
-  measurementId: "G-LCCM9RKXW3",
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
