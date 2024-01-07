@@ -200,7 +200,6 @@ const Chat = () => {
             onClick={() => {
               setEditActiveChannel(true);
               if (!listOfComponentsToClose.includes("NewChannelForm")) {
-                console.log("no estaba en el array");
                 setListOfComponentsToClose([
                   ...listOfComponentsToClose,
                   "NewChannelForm",
@@ -227,7 +226,6 @@ const Chat = () => {
               className="w-full h-[calc(100vh-120px)] flex flex-col mt-1 pt-1 pb-1 items-center justify-start scrollbar-thin scroll-px-10 scrollbar-thumb-cyan-500 dark:scrollbar-track-gray-900 scrollbar-track-gray-200"
               onScroll={(e) => {
                 if (e.target.scrollTop == 0 && allMessages.length >= 15) {
-                  console.log("SCROLLTOP EN CERO");
                   permissionToScroll(true)
                   setCantOfMsg(cantOfMsg + 10);
                 }

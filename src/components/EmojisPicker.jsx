@@ -13,7 +13,6 @@ export default function EmojisPicker({
   useEffect(() => {
     
     const closePicker = () => {
-      console.log("click");
       setShowPicker(false);
       setListOfComponentsToClose(
         listOfComponentsToClose.filter((component) => component != whichPicker)

@@ -11,14 +11,12 @@ export default function OptionsPopup({
 }) {
   useEffect(() => {
     const handleEscape = (e) => {
-      console.log("escape");
       if (e.keyCode === 27) {
         setShowOptions(false);
       }
     };
 
     const handleClick = () => {
-      console.log("optionsPopup click");
       setShowOptions(false);
     };
 

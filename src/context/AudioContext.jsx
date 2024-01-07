@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useRef } from "react";
 import { useChatContext } from "./ChatContext";
+import { toast } from "react-toastify";
 
 const AudioContext = createContext();
 
@@ -30,13 +31,10 @@ export const AudioContextProvider = ({ children }) => {
   const checkMicrophonePermission = async () => {
     let permission;
     try {
-      console.log("pidiendo permiso");
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      console.log("Microfono activado", stream);
+      await navigator.mediaDevices.getUserMedia({ audio: true });
       permission = true;
-      // El micrófono está habilitado, puedes comenzar la grabación aquí
     } catch (error) {
-      console.log("Error:", error);
+      console.error(error);
       permission = false;
     }
     return permission;
@@ -52,7 +50,10 @@ export const AudioContextProvider = ({ children }) => {
       mediaRecorderRef.current = new MediaRecorder(stream);
       mediaRecorderRef.current.start();
     } else {
-      console.log("No se pudo acceder al micrófono.");
+      return toast.error("Tienes el micrófono desactivado", {
+        position: "top-center",
+        autoClose: 2500,
+      });
     }
   };
 
@@ -61,18 +62,15 @@ export const AudioContextProvider = ({ children }) => {
     setIsRecording(false);
     mediaRecorderRef.current.stop();
     setDecimas(0);
-    console.log("nuevo tiempo", decimas / 10 - 0.15);
     stopTimer();
     mediaRecorderRef.current.addEventListener("dataavailable", async (e) => {
       const audioBlob = e.data;
       const audioUrl = await uploadFile(audioBlob, "audio");
-      console.log("url de storage", audioUrl);
       const metaAudio = {
         urlStream: audioUrl,
         duration: decimas / 10 - 0.15,
       };
       handleMessage(metaAudio);
-      console.log("se envio el audio");
     });
   };
 

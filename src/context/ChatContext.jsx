@@ -40,24 +40,22 @@ export const ChatContextProvider = ({ children }) => {
   const [showEmojiPickerChannel, setShowEmojiPickerChannel] = useState(false);
   const [showEmojiPickerChat, setShowEmojiPickerChat] = useState(false);
 
-  const permissionToScroll = (top = false,bottom = false) => {
-    setOnTop(top)
-    setLetScrollToBottom(bottom)
-  }
+  const permissionToScroll = (top = false, bottom = false) => {
+    setOnTop(top);
+    setLetScrollToBottom(bottom);
+  };
 
   const scrollToMsgRef = () => {
     msgToScrollRef.current.scrollIntoView({ behavior: "smooth" });
-    permissionToScroll(false,false)
+    permissionToScroll(false, false);
   };
 
-  
-
   const resetChatFormFields = () => {
-    if(txtAreaRef.current){
+    if (txtAreaRef.current) {
       txtAreaRef.current.value = "";
       setMsgToEdit("");
     }
-    setTextAreaValue("")
+    setTextAreaValue("");
     setFileURL(null);
     setCancelEdit(false);
   };
@@ -87,13 +85,8 @@ export const ChatContextProvider = ({ children }) => {
 
   const closeAnyComponentWithEsc = (e) => {
     if (e.keyCode === 27) {
-      console.log(
-        "lista de componentes antes del pop",
-        listOfComponentsToClose
-      );
       let componentToClose = listOfComponentsToClose.pop();
       setListOfComponentsToClose(listOfComponentsToClose);
-      console.log("lista de componentes desp del pop", listOfComponentsToClose);
       switch (componentToClose) {
         case "EmojisPickerChat":
           closeEmojisPickerChat();
@@ -111,7 +104,6 @@ export const ChatContextProvider = ({ children }) => {
           closeEditingMsg();
           break;
         default:
-          console.log("No hay ningun componente para cerrar");
           break;
       }
     }
@@ -124,10 +116,9 @@ export const ChatContextProvider = ({ children }) => {
   };
 
   const handleMessage = async (newAudio = null) => {
-    console.log("handlemMessage", txtAreaRef.current.value);
     const msgValue = txtAreaRef.current.value.trim();
     const imgURL = fileURL;
-    resetChatFormFields()
+    resetChatFormFields();
 
     if (msgValue || fileURL || newAudio) {
       if (msgToEdit) {
@@ -142,7 +133,7 @@ export const ChatContextProvider = ({ children }) => {
           edited: true,
         });
       } else {
-        permissionToScroll(false,true)
+        permissionToScroll(false, true);
         const msgRef = collection(db, `canales/${activeChannel.id}/mensajes`);
         await addDoc(msgRef, {
           username: user.displayName,
@@ -162,7 +153,8 @@ export const ChatContextProvider = ({ children }) => {
     setLoadingImage(true);
     if (!e.target.files[0].type.includes("image")) {
       e.target.value = null;
-      return toast.error("Solo puedes subir imagenes!", {
+      setLoadingImage(false);
+      return toast.error("Solo puedes subir imágenes!", {
         position: "top-center",
         autoClose: 2500,
       });
@@ -170,13 +162,14 @@ export const ChatContextProvider = ({ children }) => {
     try {
       const result = await uploadFile(e.target.files[0], "imagenes");
       setFileURL(result);
-      setLoadingImage(false);
-      e.target.value = null;
     } catch (error) {
-      toast.error("Ha ocurrido un error, intentalo mas tarde", {
+      toast.error("Ha ocurrido un error, inténtalo mas tarde", {
         position: "top-center",
         autoClose: 2500,
       });
+    } finally {
+      e.target.value = null;
+      setLoadingImage(false);
     }
   };
 

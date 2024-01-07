@@ -2,8 +2,9 @@ import { IoMdArrowRoundBack, IoMdCamera } from "react-icons/io";
 import { IoCheckmarkSharp } from "react-icons/io5";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import { useChatContext } from "../context/ChatContext";
+import { toast } from "react-toastify";
 import sinImagen from "../assets/sinImagen.jpg";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import EmojisPicker from "./EmojisPicker";
 import ChannelImagePopup from "./ChannelImagePopup";
 
@@ -37,23 +38,22 @@ export default function NewChannelForm() {
     setLoadingImage(true);
     if (!e.target.files[0].type.includes("image")) {
       e.target.value = null;
-      console.log("Solo puedes subir imagenes!");
-      // return toast.error("Solo puedes subir imagenes!", {
-      //   position: "top-center",
-      //   autoClose: 2500,
-      // });
+      setLoadingImage(false);
+      return toast.error("Solo puedes subir imágenes!", {
+        position: "top-center",
+        autoClose: 2500,
+      });
     }
     try {
       const result = await uploadFile(e.target.files[0]);
       setTempChannelImage(result);
-      e.target.value = null;
     } catch (error) {
-      console.log("Ha ocurrido un error, intentalo mas tarde");
-      // toast.error("Ha ocurrido un error, intentalo mas tarde", {
-      //   position: "top-center",
-      //   autoClose: 2500,
-      // });
+      toast.error("Ha ocurrido un error, inténtalo mas tarde", {
+        position: "top-center",
+        autoClose: 2500,
+      });
     } finally {
+      e.target.value = null;
       setLoadingImage(false);
     }
   };
@@ -67,7 +67,9 @@ export default function NewChannelForm() {
         e.stopPropagation();
         setShowEmojiPickerChannel(false);
         setListOfComponentsToClose(
-          listOfComponentsToClose.filter((component) => component != "EmojisPickerChannel")
+          listOfComponentsToClose.filter(
+            (component) => component != "EmojisPickerChannel"
+          )
         );
       }}
       onSubmit={(e) => e.preventDefault()}
@@ -80,8 +82,14 @@ export default function NewChannelForm() {
             e.stopPropagation();
             setChannelImage(null);
             setNewChannel(false);
-            setListOfComponentsToClose(listOfComponentsToClose.filter((component) => (component != "NewChannelForm" && component != "EmojisPickerChannel") ))
-            setShowEmojiPickerChannel(false)
+            setListOfComponentsToClose(
+              listOfComponentsToClose.filter(
+                (component) =>
+                  component != "NewChannelForm" &&
+                  component != "EmojisPickerChannel"
+              )
+            );
+            setShowEmojiPickerChannel(false);
             setChannelNameForm("");
             setEditActiveChannel(false);
           }}

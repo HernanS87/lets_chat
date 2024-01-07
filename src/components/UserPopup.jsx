@@ -10,14 +10,12 @@ function UserPopup() {
 
   useEffect(() => {
     const handleEscape = (e) => {
-      console.log("escape");
       if (e.keyCode === 27) {
         setPopupUser(false);
       }
     };
 
     const handleClick = () => {
-      console.log('channelImagePopup click')
       setPopupUser(false)
     }
 

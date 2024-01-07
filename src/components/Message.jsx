@@ -46,7 +46,6 @@ const Message = ({
     permissionToScroll(false,false)
     const docRef = doc(db, `canales/${activeChannel.id}/mensajes/${id}`);
     await deleteDoc(docRef);
-    console.log("BORRO MJS");
   };
 
   const handleEdit = () => {
@@ -83,12 +82,6 @@ const Message = ({
     <li
       className="w-full shadow-md flex flex-col pl-4 pr-12 relative hover:bg-slate-850  transition-all ease-in-out"
       ref={allMessages.length > 20 && position == 6 ? msgToScrollRef : msgRef}
-      onClick={() => {
-        console.log("position:", position);
-        if (allMessages.length > 20 && position == 6) {
-          console.log("Este es el mjs de referencia");
-        }
-      }}
       onMouseOver={() => {
         setShowHour(true);
       }}
@@ -129,7 +122,6 @@ const Message = ({
               } ${sameUser && !showHour ? "hidden" : " block"}`}
               onClick={(e) => {
                 e.stopPropagation();
-                console.log(e.pageY);
                 if (e.pageY > 620) {
                   setLastChildOptions(true);
                 } else {

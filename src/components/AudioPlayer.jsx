@@ -45,7 +45,6 @@ export default function AudioPlayer({ urlStream, duration, id }) {
             getTimer(e);
           }}
           onTimeUpdate={(e) => {
-            console.log(e.target.currentTime);
             setProgress(e.target.currentTime);
             setProgressPercentage((e.target.currentTime * 100) / duration);
             getTimer(e);
